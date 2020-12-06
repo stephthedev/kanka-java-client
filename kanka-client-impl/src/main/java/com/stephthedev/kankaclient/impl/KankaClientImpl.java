@@ -1,4 +1,4 @@
-package com.stephthedev.impl;
+package com.stephthedev.kankaclient.impl;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Preconditions;

@@ -5,7 +5,7 @@ A simple java client wrapper for the [Kanka API](https://kanka.io/en-US/docs/1.0
 Coming Soon!
 
 ## Using the API
-The API is found in [KankaClient.java](./kanka-client-api/src/main/java/com/stepthedev/kankaclient/api/KankaClient.java). 
+The API is found in [KankaClient.java](./kanka-client-api/src/main/java/com/stephthedev/kankaclient/api/KankaClient.java). 
 
 ## Contributing to the API
 Send a PR with your changes for a quick review. 
@@ -15,7 +15,7 @@ Send a PR with your changes for a quick review.
    [Kanka entities](https://kanka.io/en-US/docs/1.0/entities).
 1. Transforms schemas into Java pojos using [jsonschema2pojo](https://github.com/joelittlejohn/jsonschema2pojo)
 1. Kanka pojo entities are then used in the Kanka Client API and 
-[implementation](./kanka-client-impl/src/main/java/com/stepthedev/kankaclient/impl/KankaClientImpl.java). 
+[implementation](./kanka-client-impl/src/main/java/com/stephthedev/kankaclient/impl/KankaClientImpl.java). 
    
 ### Setup
 #### Prerequisites

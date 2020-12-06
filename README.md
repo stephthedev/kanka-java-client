@@ -5,7 +5,7 @@ A simple java client wrapper for the [Kanka API](https://kanka.io/en-US/docs/1.0
 Coming Soon!
 
 ## Using the API
-The API is found in [KankaClient.java](./kanka-client-api/src/main/java/com/stephthedev/kankaclient/api/KankaClient.java). 
+The API is currently incomplete but found in [KankaClient.java](./kanka-client-api/src/main/java/com/stephthedev/kankaclient/api/KankaClient.java). 
 
 ## Contributing to the API
 Send a PR with your changes for a quick review. 

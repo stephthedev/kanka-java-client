@@ -37,10 +37,11 @@
                 <version>1.0.2</version>
                 <configuration>
                     <sourceDirectory>${basedir}/src/main/resources/schema</sourceDirectory>
-                    <targetPackage>com.stephthedev.kanka.api.v1</targetPackage>
+                    <targetPackage>com.stephthedev.kanka.generated</targetPackage>
                     <removeOldOutput>true</removeOldOutput>
                     <generateBuilders>true</generateBuilders>
                     <useInnerClassBuilders>true</useInnerClassBuilders>
+                    <classNamePrefix>Kanka</classNamePrefix>
                 </configuration>
                 <executions>
                     <execution>

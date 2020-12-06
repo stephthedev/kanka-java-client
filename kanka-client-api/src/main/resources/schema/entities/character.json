@@ -1,6 +1,5 @@
 {
   "type" : "object",
-  "javaType" : "com.stephthedev.kanka.api.entities.CharacterEntity",
   "extends" : {
     "$ref" : "entity.json"
   },

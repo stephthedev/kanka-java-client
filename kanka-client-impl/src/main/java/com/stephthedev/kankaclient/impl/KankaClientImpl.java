@@ -4,10 +4,10 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.common.base.Preconditions;
-import com.stephthedev.kanka.api.client.GetCharactersResponse;
-import com.stephthedev.kanka.api.client.GetLocationsResponse;
-import com.stephthedev.kanka.api.entities.CharacterEntity;
-import com.stephthedev.kanka.api.entities.Entity;
+import com.stephthedev.kanka.generated.api.KankaCharacter;
+import com.stephthedev.kanka.generated.api.KankaEntity;
+import com.stephthedev.kanka.generated.api.KankaResponseCharacters;
+import com.stephthedev.kanka.generated.api.KankaResponseLocations;
 import com.stephthedev.kankaclient.api.EntityRequest;
 import com.stephthedev.kankaclient.api.KankaClient;
 import org.apache.http.HttpResponse;
@@ -52,33 +52,33 @@ public class KankaClientImpl implements KankaClient {
 	}
 
 	@Override
-	public GetCharactersResponse getCharacters(EntityRequest request) throws IOException, URISyntaxException {
+	public KankaResponseCharacters getCharacters(EntityRequest request) throws IOException, URISyntaxException {
 		Preconditions.checkNotNull(request, "The entity request cannot be null");
 		String url = getURLFromEntityRequest(request, host + ENDPOINT_CHARACTERS);
 		String json = makeRequest(HttpMethod.GET, url);
-		return mapper.readValue(json, GetCharactersResponse.class);
+		return mapper.readValue(json, KankaResponseCharacters.class);
 	}
 
 	@Override
-	public CharacterEntity getCharacter(long id) throws IOException, URISyntaxException {
+	public KankaCharacter getCharacter(long id) throws IOException, URISyntaxException {
 		String json = makeRequest(HttpMethod.GET, String.format(host + ENDPOINT_CHARACTER, id));
-		return mapper.readValue(getDataFieldFromJsonStr(json), CharacterEntity.class);
+		return mapper.readValue(getDataFieldFromJsonStr(json), KankaCharacter.class);
 	}
 
 	@Override
-	public CharacterEntity createCharacter(CharacterEntity character) throws IOException, URISyntaxException {
+	public KankaCharacter createCharacter(KankaCharacter character) throws IOException, URISyntaxException {
 		Preconditions.checkNotNull(character, "The character entity cannot be null");
 		String json = makeRequest(HttpMethod.POST, host + ENDPOINT_CHARACTERS, character);
-		return mapper.readValue(getDataFieldFromJsonStr(json), CharacterEntity.class);
+		return mapper.readValue(getDataFieldFromJsonStr(json), KankaCharacter.class);
 	}
 
 	@Override
-	public CharacterEntity updateCharacter(CharacterEntity character) throws IOException, URISyntaxException {
+	public KankaCharacter updateCharacter(KankaCharacter character) throws IOException, URISyntaxException {
 		Preconditions.checkNotNull(character, "The character entity cannot be null");
 		Preconditions.checkNotNull(character.getId(), "The character id cannot be null");
 
 		String json = makeRequest(HttpMethod.PATCH, String.format(host + ENDPOINT_CHARACTER, character.getId()), character);
-		return mapper.readValue(getDataFieldFromJsonStr(json), CharacterEntity.class);
+		return mapper.readValue(getDataFieldFromJsonStr(json), KankaCharacter.class);
 	}
 
 	@Override
@@ -87,10 +87,10 @@ public class KankaClientImpl implements KankaClient {
 	}
 
 	@Override
-	public GetLocationsResponse getLocations(EntityRequest request) throws IOException, URISyntaxException {
+	public KankaResponseLocations getLocations(EntityRequest request) throws IOException, URISyntaxException {
 		String url = getURLFromEntityRequest(request, host + ENDPOINT_LOCATIONS);
 		String json = makeRequest(HttpMethod.GET, url);
-		return mapper.readValue(json, GetLocationsResponse.class);
+		return mapper.readValue(json, KankaResponseLocations.class);
 	}
 
 	private String getDataFieldFromJsonStr(String json) throws JsonProcessingException {
@@ -123,7 +123,7 @@ public class KankaClientImpl implements KankaClient {
 	 * @return
 	 * @throws IOException
 	 */
-	private String makeRequest(HttpMethod httpMethod, String endpoint, Entity kankaEntity) throws IOException, URISyntaxException {
+	private String makeRequest(HttpMethod httpMethod, String endpoint, KankaEntity kankaEntity) throws IOException, URISyntaxException {
 		Preconditions.checkNotNull(httpMethod, "The HTTP request cannot be null");
 		Preconditions.checkNotNull(endpoint, "The http endpoint cannot be null");
 

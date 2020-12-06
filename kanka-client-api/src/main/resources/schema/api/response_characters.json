@@ -1,8 +1,7 @@
 {
   "type" : "object",
-  "javaType" : "com.stephthedev.kanka.api.client.GetCharactersResponse",
   "extends" : {
-    "$ref" : "base_response.json"
+    "$ref" : "response.json"
   },
   "properties" : {
     "data" : {

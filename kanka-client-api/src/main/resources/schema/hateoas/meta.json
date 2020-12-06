@@ -1,6 +1,5 @@
 {
   "type" : "object",
-  "javaType" : "com.stephthedev.kanka.api.hateoas.Meta",
   "properties" : {
     "current_page" : {
       "type" : "integer"

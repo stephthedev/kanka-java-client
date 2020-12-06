@@ -1,10 +1,13 @@
 package com.stephthedev.kankaclient.impl;
 
-import com.stephthedev.kanka.api.client.GetCharactersResponse;
-import com.stephthedev.kanka.api.entities.CharacterEntity;
+import com.stephthedev.kanka.generated.api.KankaCharacter;
+import com.stephthedev.kanka.generated.api.KankaResponseCharacters;
 import com.stephthedev.kankaclient.api.EntityRequest;
 import com.stephthedev.kankaclient.api.KankaClient;
-import org.junit.*;
+import org.junit.Assume;
+import org.junit.Before;
+import org.junit.Rule;
+import org.junit.Test;
 import org.junit.rules.TestName;
 
 import java.io.IOException;
@@ -38,22 +41,22 @@ public class KankaClientImplIT {
 
     @Test
     public void testGetAllCharacters() throws IOException, URISyntaxException {
-        GetCharactersResponse response = client.getCharacters(new EntityRequest.Builder().build());
+        KankaResponseCharacters response = client.getCharacters(new EntityRequest.Builder().build());
         assertNotNull(response);
         assertFalse(response.getData().isEmpty());
     }
 
     @Test
     public void testGetCharacter() throws IOException, URISyntaxException {
-        CharacterEntity character = client.getCharacter(310019);
+        KankaCharacter character = client.getCharacter(310019);
         assertNotNull(character);
         assertEquals("Character1", character.getName());
     }
 
     @Test
     public void testCreateCharacter() throws IOException, URISyntaxException {
-        CharacterEntity character = generateCharacter();
-        CharacterEntity response = client.createCharacter(character);
+        KankaCharacter character = generateCharacter();
+        KankaCharacter response = client.createCharacter(character);
         assertNotNull(response);
         assertEquals(character.getName(), response.getName());
 
@@ -62,14 +65,14 @@ public class KankaClientImplIT {
 
     @Test
     public void testUpdateCharacter() throws IOException, URISyntaxException {
-        CharacterEntity origCharacter = client.getCharacter(310019);
+        KankaCharacter origCharacter = client.getCharacter(310019);
         String origEntry = origCharacter.getEntry();
         String seed = System.currentTimeMillis() + "";
         String updatedEntry = origCharacter.getEntry() + "<br />" + seed;
 
         //Update character
         origCharacter.setEntry(updatedEntry);
-        CharacterEntity response = client.updateCharacter(origCharacter);
+        KankaCharacter response = client.updateCharacter(origCharacter);
         assertNotNull(response);
         assertTrue(response.getEntry().contains(seed));
 
@@ -80,8 +83,8 @@ public class KankaClientImplIT {
 
     @Test
     public void testDeleteCharacter() throws IOException, URISyntaxException {
-        CharacterEntity character = generateCharacter();
-        CharacterEntity createResp = client.createCharacter(character);
+        KankaCharacter character = generateCharacter();
+        KankaCharacter createResp = client.createCharacter(character);
         assertNotNull(createResp);
 
         client.deleteCharacter(createResp.getId());
@@ -94,8 +97,8 @@ public class KankaClientImplIT {
         }
     }
 
-    private CharacterEntity generateCharacter() {
-        CharacterEntity character = (CharacterEntity) new CharacterEntity.CharacterEntityBuilder<>()
+    private KankaCharacter generateCharacter() {
+        KankaCharacter character = (KankaCharacter) new KankaCharacter.KankaCharacterBuilder<>()
                 .withName(testName.getMethodName() + System.nanoTime())
                 .withAge("10")
                 .withSex("F")

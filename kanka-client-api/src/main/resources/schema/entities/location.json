@@ -1,0 +1,29 @@
+{
+  "type" : "object",
+  "javaType" : "com.stephthedev.kanka.api.entities.LocationEntity",
+  "extends" : {
+    "$ref" : "entity.json"
+  },
+  "properties" : {
+    "name" : {
+      "type" : "string",
+      "required" : true
+    },
+    "type" : {
+      "type" : "string"
+    },
+    "parent_location_id" : {
+      "type" : "string",
+      "format": "utc-millisec"
+    },
+    "image_url" : {
+      "type" : "string"
+    },
+    "is_map_private" : {
+      "type" : "boolean"
+    },
+    "map_url" : {
+      "type" : "string"
+    }
+  }
+}

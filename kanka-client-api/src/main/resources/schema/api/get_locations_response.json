@@ -1,0 +1,15 @@
+{
+  "type" : "object",
+  "javaType" : "com.stephthedev.kanka.api.client.GetLocationsResponse",
+  "extends" : {
+    "$ref" : "base_response.json"
+  },
+  "properties" : {
+    "data" : {
+      "type" : "array",
+      "items" : {
+        "$ref" : "../entities/location.json"
+      }
+    }
+  }
+}

@@ -20,10 +20,12 @@
         "type" : "string"
       }
     },
-
     "family_id" : {
       "type" : "string",
       "format": "utc-millisec"
+    },
+    "has_custom_image" : {
+      "type" : "boolean"
     },
     "is_dead" : {
       "type" : "boolean"
@@ -36,7 +38,8 @@
       "format": "utc-millisec"
     },
     "name" : {
-      "type" : "string"
+      "type" : "string",
+      "required" : true
     },
     "personality_entry" : {
       "type" : "array",

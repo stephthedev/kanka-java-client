@@ -39,6 +39,8 @@
                     <sourceDirectory>${basedir}/src/main/resources/schema</sourceDirectory>
                     <targetPackage>com.stephthedev.kanka.api.v1</targetPackage>
                     <removeOldOutput>true</removeOldOutput>
+                    <generateBuilders>true</generateBuilders>
+                    <useInnerClassBuilders>true</useInnerClassBuilders>
                 </configuration>
                 <executions>
                     <execution>

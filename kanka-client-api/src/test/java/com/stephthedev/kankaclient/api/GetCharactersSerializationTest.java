@@ -12,43 +12,37 @@ import org.junit.Test;
 
 import static org.junit.Assert.*;
 
-public class GetCharactersResponseTest {
+public class GetCharactersSerializationTest {
 
     private static final String RESPONSE_FILE = "characters_response.json";
 
-    private static GetCharactersResponse responseFirstPage;
+    private static GetCharactersResponse response;
 
     @BeforeClass
     public static void setUp() throws IOException {
-        responseFirstPage = loadResponse(RESPONSE_FILE);
+        File file = TestUtil.loadFile(RESPONSE_FILE);
+
+        ObjectMapper mapper = new ObjectMapper();
+        response = mapper.readValue(file, GetCharactersResponse.class);
+        assertNotNull(response);
     }
 
     @Test
     public void testMeta() throws IOException {
-        assertNotNull(responseFirstPage.getMeta());
-        Meta meta = responseFirstPage.getMeta();
+        assertNotNull(response.getMeta());
+        Meta meta = response.getMeta();
         assertEquals(68, meta.getTotal().intValue());
         assertEquals("http://kanka.io/api/1.0/campaigns/13936/characters", meta.getPath());
     }
 
     @Test
     public void testLinks() throws Exception {
-        assertNotNull(responseFirstPage.getLinks());
-        Links links = responseFirstPage.getLinks();
+        assertNotNull(response.getLinks());
+        Links links = response.getLinks();
 
         assertNotNull(links.getFirst());
         assertNotNull(links.getNext());
         assertNotNull(links.getLast());
         assertNull(links.getPrevious());
-    }
-
-    private static GetCharactersResponse loadResponse(String fileName) throws IOException {
-        ClassLoader classLoader = GetCharactersResponseTest.class.getClassLoader();
-        File responseFile = new File(classLoader.getResource(fileName).getFile());
-        ObjectMapper mapper = new ObjectMapper();
-        GetCharactersResponse response = mapper.readValue(responseFile, GetCharactersResponse.class);
-        assertNotNull(response);
-
-        return response;
     }
 }

@@ -20,6 +20,4 @@ public interface KankaClient {
     CharacterEntity updateCharacter(CharacterEntity character) throws IOException, URISyntaxException;
 
     CharacterEntity deleteCharacter(long id) throws IOException, URISyntaxException;
-
-
 }

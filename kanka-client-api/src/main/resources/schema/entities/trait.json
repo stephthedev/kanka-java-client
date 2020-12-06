@@ -1,0 +1,28 @@
+{
+  "type" : "object",
+  "javaType" : "com.stephthedev.kanka.api.entities.TraitEntity",
+  "extends" : {
+    "$ref" : "entity.json"
+  },
+  "properties" : {
+    "default_order" : {
+      "type" : "integer"
+    },
+    "entry" : {
+      "type" : "string"
+    },
+    "id" : {
+      "type" : "string",
+      "format": "utc-millisec"
+    },
+    "is_private" : {
+      "type" : "boolean"
+    },
+    "name" : {
+      "type" : "string"
+    },
+    "section" : {
+      "type" : "string"
+    }
+  }
+}

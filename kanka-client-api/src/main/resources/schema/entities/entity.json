@@ -1,0 +1,55 @@
+{
+  "type" : "object",
+  "javaType" : "com.stephthedev.kanka.api.entities.Entity",
+  "properties" : {
+    "created_at" : {
+      "type" : "string"
+    },
+    "created_by" : {
+      "type" : "string"
+    },
+    "entity_id" : {
+      "type" : "string",
+      "format": "utc-millisec"
+    },
+    "entry" : {
+      "type" : "string"
+    },
+    "entry_parsed" : {
+      "type" : "string"
+    },
+    "id" : {
+      "type" : "string",
+      "format": "utc-millisec"
+    },
+    "image" : {
+      "type" : "string"
+    },
+    "image_full" : {
+      "type" : "string"
+    },
+    "image_thumb" : {
+      "type" : "string"
+    },
+    "is_private" : {
+      "type" : "boolean"
+    },
+    "name" : {
+      "type" : "string"
+    },
+    "tags" : {
+      "type" : "array",
+      "items" : {
+        "type" : "string",
+        "format": "utc-millisec"
+      }
+    },
+    "updated_at" : {
+      "type" : "string"
+    },
+    "updated_by" : {
+      "type" : "string",
+      "format": "utc-millisec"
+    }
+  }
+}

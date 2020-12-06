@@ -1,0 +1,12 @@
+{
+  "type" : "object",
+  "javaType" : "com.stephthedev.kanka.api.client.BaseResponse",
+  "properties" : {
+    "links" : {
+      "$ref" : "../hateoas/links.json"
+    },
+    "meta" : {
+      "$ref" : "../hateoas/meta.json"
+    }
+  }
+}

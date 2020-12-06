@@ -1,0 +1,27 @@
+{
+  "type" : "object",
+  "javaType" : "com.stephthedev.kanka.api.hateoas.Meta",
+  "properties" : {
+    "current_page" : {
+      "type" : "integer"
+    },
+    "from" : {
+      "type" : "integer"
+    },
+    "last_page" : {
+      "type" : "integer"
+    },
+    "path" : {
+      "type" : "string"
+    },
+    "per_page" : {
+      "type" : "integer"
+    },
+    "to" : {
+      "type" : "integer"
+    },
+    "total" : {
+      "type" : "integer"
+    }
+  }
+}

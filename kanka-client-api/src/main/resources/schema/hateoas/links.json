@@ -1,0 +1,19 @@
+{
+  "type" : "object",
+  "javaType" : "com.stephthedev.kanka.api.hateoas.Links",
+  "properties" : {
+    "first" : {
+      "type" : "string"
+    },
+    "last" : {
+      "type" : "string"
+    },
+    "prev" : {
+      "type" : "string",
+      "javaName" : "previous"
+    },
+    "next" : {
+      "type" : "string"
+    }
+  }
+}

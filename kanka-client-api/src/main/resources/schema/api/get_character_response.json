@@ -1,9 +1,0 @@
-{
-  "type" : "object",
-  "javaType" : "com.stephthedev.kanka.api.client.GetCharacterResponse",
-  "properties" : {
-    "data" : {
-      "$ref" : "../entities/character.json"
-    }
-  }
-}

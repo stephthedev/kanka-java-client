@@ -1,20 +1,22 @@
 package com.stephthedev.kankaclient.impl;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.common.base.Preconditions;
-import com.stephthedev.kanka.api.client.GetCharacterResponse;
 import com.stephthedev.kanka.api.client.GetCharactersResponse;
+import com.stephthedev.kanka.api.client.GetLocationsResponse;
 import com.stephthedev.kanka.api.entities.CharacterEntity;
+import com.stephthedev.kanka.api.entities.Entity;
+import com.stephthedev.kankaclient.api.EntityRequest;
+import com.stephthedev.kankaclient.api.KankaClient;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apache.http.StatusLine;
 import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpUriRequest;
+import org.apache.http.client.methods.*;
+import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.HttpClients;
-
-import com.stephthedev.kankaclient.api.EntityRequest;
-import com.stephthedev.kankaclient.api.KankaClient;
 import org.apache.http.util.EntityUtils;
 
 import java.io.IOException;
@@ -29,6 +31,7 @@ public class KankaClientImpl implements KankaClient {
 
 	private static final String ENDPOINT_CHARACTERS = "/characters";
 	private static final String ENDPOINT_CHARACTER = "/characters/%d";
+	private static final String ENDPOINT_LOCATIONS = "/locations";
 
 	private static enum HttpMethod {
 		GET, POST, PATCH, DELETE
@@ -50,41 +53,67 @@ public class KankaClientImpl implements KankaClient {
 
 	@Override
 	public GetCharactersResponse getCharacters(EntityRequest request) throws IOException, URISyntaxException {
-		String json = null;
-		String url = host + ENDPOINT_CHARACTERS;
-		if (request != null) {
-			if (request.getPage() > -1) {
-				//TODO: Pull the query param out
-				url = host + ENDPOINT_CHARACTERS + "?page=" + request.getPage();
-			} else if (request.getLink() != null) {
-				url = request.getLink();
-			}
-		}
-
-		json = makeRequest(HttpMethod.GET, url);
+		Preconditions.checkNotNull(request, "The entity request cannot be null");
+		String url = getURLFromEntityRequest(request, host + ENDPOINT_CHARACTERS);
+		String json = makeRequest(HttpMethod.GET, url);
 		return mapper.readValue(json, GetCharactersResponse.class);
 	}
 
 	@Override
 	public CharacterEntity getCharacter(long id) throws IOException, URISyntaxException {
-		String json = makeRequest(HttpMethod.GET, String.format(ENDPOINT_CHARACTER, id));
-		GetCharacterResponse response = mapper.readValue(json, GetCharacterResponse.class);
-		return response.getData();
+		String json = makeRequest(HttpMethod.GET, String.format(host + ENDPOINT_CHARACTER, id));
+		return mapper.readValue(getDataFieldFromJsonStr(json), CharacterEntity.class);
 	}
 
 	@Override
 	public CharacterEntity createCharacter(CharacterEntity character) throws IOException, URISyntaxException {
-		return null;
+		Preconditions.checkNotNull(character, "The character entity cannot be null");
+		String json = makeRequest(HttpMethod.POST, host + ENDPOINT_CHARACTERS, character);
+		return mapper.readValue(getDataFieldFromJsonStr(json), CharacterEntity.class);
 	}
 
 	@Override
 	public CharacterEntity updateCharacter(CharacterEntity character) throws IOException, URISyntaxException {
-		return null;
+		Preconditions.checkNotNull(character, "The character entity cannot be null");
+		Preconditions.checkNotNull(character.getId(), "The character id cannot be null");
+
+		String json = makeRequest(HttpMethod.PATCH, String.format(host + ENDPOINT_CHARACTER, character.getId()), character);
+		return mapper.readValue(getDataFieldFromJsonStr(json), CharacterEntity.class);
 	}
 
 	@Override
-	public CharacterEntity deleteCharacter(long id) throws IOException, URISyntaxException {
-		return null;
+	public void deleteCharacter(long id) throws IOException, URISyntaxException {
+		makeRequest(HttpMethod.DELETE, String.format(host + ENDPOINT_CHARACTER, id));
+	}
+
+	@Override
+	public GetLocationsResponse getLocations(EntityRequest request) throws IOException, URISyntaxException {
+		String url = getURLFromEntityRequest(request, host + ENDPOINT_LOCATIONS);
+		String json = makeRequest(HttpMethod.GET, url);
+		return mapper.readValue(json, GetLocationsResponse.class);
+	}
+
+	private String getDataFieldFromJsonStr(String json) throws JsonProcessingException {
+		ObjectNode node = mapper.readValue(json, ObjectNode.class);
+		return node.get("data").toString();
+	}
+
+	private String getURLFromEntityRequest(EntityRequest request, String defaultEndpoint) {
+		String url = defaultEndpoint;
+		if (request != null) {
+			if (request.getPage() > -1) {
+				//TODO: Pull the query param out
+				url = defaultEndpoint + "?page=" + request.getPage();
+			} else if (request.getLink() != null) {
+				url = request.getLink();
+			}
+		}
+
+		return url;
+	}
+
+	private String makeRequest(HttpMethod httpMethod, String endpoint) throws IOException, URISyntaxException {
+		return makeRequest(httpMethod, endpoint, null);
 	}
 
 	/**
@@ -94,24 +123,49 @@ public class KankaClientImpl implements KankaClient {
 	 * @return
 	 * @throws IOException
 	 */
-	private String makeRequest(HttpMethod httpMethod, String endpoint) throws IOException, URISyntaxException {
+	private String makeRequest(HttpMethod httpMethod, String endpoint, Entity kankaEntity) throws IOException, URISyntaxException {
 		Preconditions.checkNotNull(httpMethod, "The HTTP request cannot be null");
 		Preconditions.checkNotNull(endpoint, "The http endpoint cannot be null");
 
-		HttpUriRequest httpReq = null;
+		//Make the request
+		HttpResponse response = null;
+		URI uri = new URI(endpoint);
 		int expectedCode = -1;
-		if (HttpMethod.GET.equals(httpMethod)) {
-			httpReq = new HttpGet(new URI(endpoint));
-			expectedCode = HttpStatus.SC_OK;
+
+		if (HttpMethod.POST.equals(httpMethod) || HttpMethod.PATCH.equals(httpMethod)) {
+			HttpEntityEnclosingRequestBase httpReq = null;
+			if (HttpMethod.POST.equals(httpMethod)) {
+				httpReq = new HttpPost(uri);
+				expectedCode = HttpStatus.SC_CREATED;
+			} else {
+				httpReq = new HttpPatch(uri);
+				expectedCode = HttpStatus.SC_OK;
+			}
+			addCommonHeaders(httpReq);
+			httpReq.setEntity(new StringEntity(mapper.writeValueAsString(kankaEntity)));
+			response = httpClient.execute(httpReq);
+		} else if (HttpMethod.GET.equals(httpMethod) || HttpMethod.DELETE.equals(httpMethod)) {
+			HttpUriRequest httpReq = null;
+			if (HttpMethod.DELETE.equals(httpMethod)) {
+				httpReq = new HttpDelete(uri);
+				expectedCode = HttpStatus.SC_NO_CONTENT;
+			} else {
+				httpReq = new HttpGet(uri);
+				expectedCode = HttpStatus.SC_OK;
+			}
+			addCommonHeaders(httpReq);
+			response = httpClient.execute(httpReq);
+		} else {
+			throw new IOException("Unsupported HTTP request for " + httpMethod);
 		}
 
-		//Set the headers
-		httpReq.setHeader("Authorization", "Bearer " + authToken);
-		httpReq.setHeader("Content-Type", "application/json");
-
-		//Make the request
-		HttpResponse response = httpClient.execute(httpReq);
+		//Examine the response
 		if (response.getStatusLine().getStatusCode() == expectedCode) {
+			if (HttpMethod.DELETE.equals(httpMethod)) {
+				//No_content
+				return null;
+			}
+
 			String json = EntityUtils.toString(response.getEntity());
 			return json;
 		} else {
@@ -120,6 +174,12 @@ public class KankaClientImpl implements KankaClient {
 			String message = String.format(error, status.getStatusCode(), status.getReasonPhrase());
 			throw new IOException(message);
 		}
+	}
+
+	private void addCommonHeaders(HttpUriRequest httpReq) {
+		httpReq.setHeader("Authorization", "Bearer " + authToken);
+		httpReq.setHeader("Content-Type", "application/json");
+		httpReq.setHeader("Accept", "application/json");
 	}
 
 	public static class Builder {

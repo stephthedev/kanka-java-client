@@ -6,4 +6,10 @@ public class CSVRow {
     String race;
     String age;
     String location;
+    String sublocation;
+    String affiliation;
+    int pageNumber;
+    String personality;
+    String playerNotes;
+    String gmNotes;
 }

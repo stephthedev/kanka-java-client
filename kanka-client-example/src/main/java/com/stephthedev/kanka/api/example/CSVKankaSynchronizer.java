@@ -3,10 +3,12 @@ package com.stephthedev.kanka.api.example;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 import com.stephthedev.kanka.api.client.GetCharactersResponse;
+import com.stephthedev.kanka.api.client.GetLocationsResponse;
 import com.stephthedev.kanka.api.entities.CharacterEntity;
-import com.stephthedev.kankaclient.impl.KankaClientImpl;
+import com.stephthedev.kanka.api.entities.LocationEntity;
 import com.stephthedev.kankaclient.api.EntityRequest;
 import com.stephthedev.kankaclient.api.KankaClient;
+import com.stephthedev.kankaclient.impl.KankaClientImpl;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -32,16 +34,36 @@ public class CSVKankaSynchronizer {
     List<CharacterEntity> getAllCharacters() throws IOException, URISyntaxException {
         List<CharacterEntity> characters = new ArrayList<>();
         GetCharactersResponse response = client.getCharacters(new EntityRequest.Builder().build());
-        while (response.getLinks().getNext() != null) {
-            characters.addAll(response.getData());
+        characters.addAll(response.getData());
 
+        while (response.getLinks().getNext() != null) {
             EntityRequest request = new EntityRequest.Builder()
                     .withLink(response.getLinks().getNext())
                     .build();
             response = client.getCharacters(request);
+            characters.addAll(response.getData());
         }
-        characters.addAll(response.getData());
         return characters;
+    }
+
+    List<LocationEntity> getAllLocations() throws IOException, URISyntaxException {
+        List<LocationEntity> locations = new ArrayList<>();
+        GetLocationsResponse response = client.getLocations(new EntityRequest.Builder().build());
+        locations.addAll(response.getData());
+
+        while (response.getLinks().getNext() != null) {
+            EntityRequest request = new EntityRequest.Builder()
+                    .withLink(response.getLinks().getNext())
+                    .build();
+            response = client.getLocations(request);
+            locations.addAll(response.getData());
+        }
+        return locations;
+    }
+
+    void sync() throws IOException, URISyntaxException {
+        List<CharacterEntity> characters = getAllCharacters();
+        List<LocationEntity> locations = getAllLocations();
     }
 
     public static void main(String[] args) throws IOException, URISyntaxException {
@@ -53,7 +75,9 @@ public class CSVKankaSynchronizer {
 
         try {
             CSVKankaSynchronizer sync = new CSVKankaSynchronizer(csvFile, campaignId, authToken);
-            sync.getAllCharacters();
+            List<CharacterEntity> characters = sync.getAllCharacters();
+            List<LocationEntity> locations = sync.getAllLocations();
+            System.out.println(locations.size());
         } catch (Exception e) {
             e.printStackTrace();
         }

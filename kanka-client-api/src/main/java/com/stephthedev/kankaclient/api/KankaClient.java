@@ -1,6 +1,7 @@
 package com.stephthedev.kankaclient.api;
 
 import com.stephthedev.kanka.api.client.GetCharactersResponse;
+import com.stephthedev.kanka.api.client.GetLocationsResponse;
 import com.stephthedev.kanka.api.entities.CharacterEntity;
 
 import java.io.IOException;
@@ -19,5 +20,7 @@ public interface KankaClient {
 
     CharacterEntity updateCharacter(CharacterEntity character) throws IOException, URISyntaxException;
 
-    CharacterEntity deleteCharacter(long id) throws IOException, URISyntaxException;
+    void deleteCharacter(long id) throws IOException, URISyntaxException;
+
+    GetLocationsResponse getLocations(EntityRequest request) throws IOException, URISyntaxException;
 }

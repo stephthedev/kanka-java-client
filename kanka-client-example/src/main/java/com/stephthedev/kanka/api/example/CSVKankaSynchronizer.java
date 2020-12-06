@@ -4,7 +4,7 @@ import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 import com.stephthedev.kanka.api.client.GetCharactersResponse;
 import com.stephthedev.kanka.api.entities.CharacterEntity;
-import com.stephthedev.kankaclient.KankaClientImpl;
+import com.stephthedev.impl.KankaClientImpl;
 import com.stephthedev.kankaclient.api.EntityRequest;
 import com.stephthedev.kankaclient.api.KankaClient;
 

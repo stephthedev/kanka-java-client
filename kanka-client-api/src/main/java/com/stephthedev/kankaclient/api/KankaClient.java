@@ -11,20 +11,15 @@ import java.net.URISyntaxException;
  */
 public interface KankaClient {
 
-    GetCharactersResponse getCharacters(EntityRequest request)
-            throws IOException, URISyntaxException;
+    GetCharactersResponse getCharacters(EntityRequest request) throws IOException, URISyntaxException;
 
-    CharacterEntity getCharacter(long id)
-            throws IOException, URISyntaxException;
+    CharacterEntity getCharacter(long id) throws IOException, URISyntaxException;
 
-    CharacterEntity createCharacter(CharacterEntity character)
-            throws IOException, URISyntaxException;
+    CharacterEntity createCharacter(CharacterEntity character) throws IOException, URISyntaxException;
 
-    CharacterEntity updateCharacter(CharacterEntity character)
-            throws IOException, URISyntaxException;
+    CharacterEntity updateCharacter(CharacterEntity character) throws IOException, URISyntaxException;
 
-    CharacterEntity deleteCharacter(long id)
-            throws IOException, URISyntaxException;
+    CharacterEntity deleteCharacter(long id) throws IOException, URISyntaxException;
 
 
 }

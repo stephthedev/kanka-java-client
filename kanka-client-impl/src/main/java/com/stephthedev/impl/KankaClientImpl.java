@@ -1,11 +1,10 @@
-package com.stephthedev.kankaclient;
+package com.stephthedev.impl;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Preconditions;
 import com.stephthedev.kanka.api.client.GetCharacterResponse;
 import com.stephthedev.kanka.api.client.GetCharactersResponse;
 import com.stephthedev.kanka.api.entities.CharacterEntity;
-import org.apache.http.HttpRequest;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apache.http.StatusLine;

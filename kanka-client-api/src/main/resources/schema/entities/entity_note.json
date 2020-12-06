@@ -1,0 +1,11 @@
+{
+  "type" : "object",
+  "extends" : {
+    "$ref" : "entity.json"
+  },
+  "properties" : {
+    "visibility" : {
+      "type" : "string"
+    }
+  }
+}

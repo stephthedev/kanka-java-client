@@ -1,8 +1,6 @@
 package com.stephthedev.kankaclient.api;
 
-import com.stephthedev.kanka.generated.api.KankaCharacter;
-import com.stephthedev.kanka.generated.api.KankaResponseCharacters;
-import com.stephthedev.kanka.generated.api.KankaResponseLocations;
+import com.stephthedev.kanka.generated.api.*;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -13,14 +11,20 @@ import java.net.URISyntaxException;
 public interface KankaClient {
 
     KankaResponseCharacters getCharacters(EntityRequest request) throws IOException, URISyntaxException;
-
     KankaCharacter getCharacter(long id) throws IOException, URISyntaxException;
-
     KankaCharacter createCharacter(KankaCharacter character) throws IOException, URISyntaxException;
-
     KankaCharacter updateCharacter(KankaCharacter character) throws IOException, URISyntaxException;
-
     void deleteCharacter(long id) throws IOException, URISyntaxException;
 
     KankaResponseLocations getLocations(EntityRequest request) throws IOException, URISyntaxException;
+    KankaLocation getLocation(long id) throws IOException, URISyntaxException;
+    KankaLocation createLocation(KankaLocation location) throws IOException, URISyntaxException;
+    KankaLocation updateLocation(KankaLocation location) throws IOException, URISyntaxException;
+    void deleteLocation(long id) throws IOException, URISyntaxException;
+
+    KankaResponseNotes getEntityNotes(long entityId) throws IOException, URISyntaxException;
+    KankaEntityNote getEntityNote(long entityId, long noteId) throws IOException, URISyntaxException;
+    KankaEntityNote createEntityNote(long entityId, KankaEntityNote note) throws IOException, URISyntaxException;
+    KankaEntityNote updateEntityNote(long entityId, KankaEntityNote note) throws IOException, URISyntaxException;
+    void deleteEntityNote(long id) throws IOException, URISyntaxException;
 }

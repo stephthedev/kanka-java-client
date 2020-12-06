@@ -1,0 +1,14 @@
+{
+  "type" : "object",
+  "extends" : {
+    "$ref" : "response.json"
+  },
+  "properties" : {
+    "data" : {
+      "type" : "array",
+      "items" : {
+        "$ref" : "../entities/entity_note.json"
+      }
+    }
+  }
+}

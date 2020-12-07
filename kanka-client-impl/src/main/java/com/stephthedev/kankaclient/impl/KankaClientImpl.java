@@ -1,11 +1,16 @@
 package com.stephthedev.kankaclient.impl;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.common.base.Preconditions;
-import com.stephthedev.kanka.generated.api.*;
-import com.stephthedev.kankaclient.api.EntityRequest;
+import com.stephthedev.kanka.generated.entities.KankaCharacter;
+import com.stephthedev.kanka.generated.entities.KankaEntity;
+import com.stephthedev.kanka.generated.entities.KankaEntityNote;
+import com.stephthedev.kanka.generated.entities.KankaLocation;
+import com.stephthedev.kankaclient.api.EntitiesResponse;
+import com.stephthedev.kankaclient.api.EntitiesRequest;
 import com.stephthedev.kankaclient.api.KankaClient;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
@@ -54,8 +59,8 @@ public class KankaClientImpl implements KankaClient {
 	}
 
 	@Override
-	public KankaResponseCharacters getCharacters(EntityRequest request) throws IOException, URISyntaxException {
-		return readEntities(ENDPOINT_CHARACTERS, KankaResponseCharacters.class, request);
+	public EntitiesResponse<KankaCharacter> getCharacters(EntitiesRequest request) throws IOException, URISyntaxException {
+		return readEntities(ENDPOINT_CHARACTERS, KankaCharacter.class, request);
 	}
 
 	@Override
@@ -65,7 +70,7 @@ public class KankaClientImpl implements KankaClient {
 
 	@Override
 	public KankaCharacter createCharacter(KankaCharacter character) throws IOException, URISyntaxException {
-		return createEntity(ENDPOINT_CHARACTER, KankaCharacter.class, character);
+		return createEntity(ENDPOINT_CHARACTERS, KankaCharacter.class, character);
 	}
 
 	@Override
@@ -79,8 +84,8 @@ public class KankaClientImpl implements KankaClient {
 	}
 
 	@Override
-	public KankaResponseLocations getLocations(EntityRequest request) throws IOException, URISyntaxException {
-		return readEntities(ENDPOINT_LOCATIONS, KankaResponseLocations.class, request);
+	public EntitiesResponse<KankaLocation> getLocations(EntitiesRequest request) throws IOException, URISyntaxException {
+		return readEntities(ENDPOINT_LOCATIONS, KankaLocation.class, request);
 	}
 
 	@Override
@@ -104,8 +109,8 @@ public class KankaClientImpl implements KankaClient {
 	}
 
 	@Override
-	public KankaResponseNotes getEntityNotes(long parentId) throws IOException, URISyntaxException {
-		return readEntities(ENDPOINT_ENTITY_NOTES, KankaResponseNotes.class, parentId);
+	public EntitiesResponse<KankaEntityNote> getEntityNotes(long parentId) throws IOException, URISyntaxException {
+		return readEntities(ENDPOINT_ENTITY_NOTES, KankaEntityNote.class, parentId);
 	}
 
 	@Override
@@ -139,7 +144,7 @@ public class KankaClientImpl implements KankaClient {
 		return node.get("data").toString();
 	}
 
-	private String getURLFromEntityRequest(EntityRequest request, String defaultEndpoint) {
+	private String getURLFromEntityRequest(EntitiesRequest request, String defaultEndpoint) {
 		String url = defaultEndpoint;
 		if (request != null) {
 			if (request.getPage() > -1) {
@@ -179,17 +184,21 @@ public class KankaClientImpl implements KankaClient {
 		return type.cast(mapper.readValue(getDataFieldFromJsonStr(json), type));
 	}
 
-	private <T extends KankaResponse> T readEntities(String endpoint, Class<T> type, EntityRequest request) throws IOException, URISyntaxException {
+	private EntitiesResponse readEntities(String endpoint, Class type, EntitiesRequest request) throws IOException, URISyntaxException {
 		Preconditions.checkNotNull(request, "The entity request cannot be null");
 		String url = getURLFromEntityRequest(request, host + endpoint);
 		String json = makeRequest(HttpMethod.GET, url, null);
-		return type.cast(mapper.readValue(json, type));
+		JavaType entitiesResponseType = mapper.getTypeFactory()
+				.constructParametricType(EntitiesResponse.class, type);
+		return mapper.readValue(json, entitiesResponseType);
 	}
 
-	private <T extends KankaResponse> T readEntities(String endpoint, Class<T> type, long entityId) throws IOException, URISyntaxException {
+	private EntitiesResponse readEntities(String endpoint, Class type, long entityId) throws IOException, URISyntaxException {
 		Preconditions.checkArgument(entityId > 0, "The entity id must be greater than 0");
 		String json = makeRequest(HttpMethod.GET, String.format(host + endpoint, entityId), null);
-		return type.cast(mapper.readValue(json, type));
+		JavaType entitiesResponseType = mapper.getTypeFactory()
+				.constructParametricType(EntitiesResponse.class, type);
+		return mapper.readValue(json, entitiesResponseType);
 	}
 
 	private <T extends KankaEntity> T updateEntity(String endpoint, Class<T> type, KankaEntity entity) throws IOException, URISyntaxException {

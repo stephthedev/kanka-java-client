@@ -5,12 +5,12 @@ package com.stephthedev.kankaclient.api;
  * Helps with pagination:
  * https://kanka.io/en-US/docs/1.0/pagination
  */
-public class EntityRequest {
+public class EntitiesRequest {
     
     private int page;
     private String link;
 
-    private EntityRequest(int page, String link) {
+    private EntitiesRequest(int page, String link) {
         this.page = page;
         this.link = link;
     }
@@ -38,7 +38,7 @@ public class EntityRequest {
             return this;
         }
 
-        public EntityRequest build() {
+        public EntitiesRequest build() {
             boolean hasPage = (page > 0) ? true : false;
             boolean hasLink = (link != null && !link.trim().isEmpty()) ? true : false;
 
@@ -50,7 +50,7 @@ public class EntityRequest {
                 //Do nothing
             }
 
-            return new EntityRequest(page, link);
+            return new EntitiesRequest(page, link);
         }
     }
 }

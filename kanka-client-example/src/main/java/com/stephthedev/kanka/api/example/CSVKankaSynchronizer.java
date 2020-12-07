@@ -125,7 +125,35 @@ public class CSVKankaSynchronizer {
         for (CSVCharacter csvCharacter : csvCharacters) {
             System.out.println("Upserting " + csvCharacter.getName());
             KankaCharacter kankaCharacter = upsertCharacter(csvCharacter);
+            KankaEntityNote kankaEntityNote = upsertCharacterNote(csvCharacter.getGmNotes(),
+                    kankaCharacter.getEntityId());
         }
+    }
+
+    private KankaEntityNote upsertCharacterNote(String text, long parentId) throws IOException, URISyntaxException {
+        final String noteName = "GM Notes";
+        KankaEntityNote note = (KankaEntityNote) new KankaEntityNote.KankaEntityNoteBuilder<>()
+                .withVisibility("admin")
+                .withEntry(text)
+                .withEntityId(parentId)
+                .withName(noteName)
+                .build();
+
+        KankaResponseNotes response = client.getEntityNotes(parentId);
+        Optional<KankaEntityNote> opt = response.getData().stream()
+                .filter(e -> noteName.equalsIgnoreCase(e.getName()))
+                .findFirst();
+        if (opt.isPresent()) {
+            KankaEntityNote kankaNote = opt.get();
+            note.setId(kankaNote.getId());
+
+            System.out.println(String.format(UPDATING_MSG, "entity-note", note.getId(), note.getName()));
+            note = client.updateEntityNote(parentId, note);
+        } else {
+            System.out.println(String.format(CREATING_MSG, "entity-note", note.getName()));
+            note = client.createEntityNote(parentId, note);
+        }
+        return note;
     }
 
     private KankaCharacter upsertCharacter(CSVCharacter csvCharacter) throws IOException, URISyntaxException {
@@ -154,17 +182,6 @@ public class CSVKankaSynchronizer {
             charFromKanka = client.createCharacter(character);
         }
         return charFromKanka;
-    }
-
-    private KankaCharacter getCharacterOnKanka(CSVCharacter csvCharacter, List<KankaCharacter> kankaCharacters) {
-        Optional<KankaCharacter> opt = kankaCharacters.stream()
-                .filter(kankaCharacter -> kankaCharacter.getName().equalsIgnoreCase(csvCharacter.getName()))
-                .findFirst();
-        if (opt.isPresent()) {
-            return opt.get();
-        } else {
-            return null;
-        }
     }
 
     private void setPersonalityTraits(KankaCharacter kankaCharacter, String personality) {

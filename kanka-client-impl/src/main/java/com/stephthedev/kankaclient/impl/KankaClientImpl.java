@@ -32,10 +32,10 @@ public class KankaClientImpl implements KankaClient {
 	private static final String ENDPOINT_LOCATION = "/location/%id";
 	private static final String ENDPOINT_LOCATIONS = "/locations";
 
-	private static final String ENDPOINT_NOTE = "/note/%d";
-	private static final String ENDPOINT_NOTES = "/notes";
+	private static final String ENDPOINT_ENTITY_NOTE = "/entities/%d/entity_notes/%d";
+	private static final String ENDPOINT_ENTITY_NOTES = "/entities/%d/entity_notes";
 
-	private static enum HttpMethod {
+	private enum HttpMethod {
 		GET, POST, PATCH, DELETE
 	}
 
@@ -55,77 +55,77 @@ public class KankaClientImpl implements KankaClient {
 
 	@Override
 	public KankaResponseCharacters getCharacters(EntityRequest request) throws IOException, URISyntaxException {
-		return makeReadEntitiesRequest(ENDPOINT_CHARACTERS, request, KankaResponseCharacters.class);
+		return readEntities(ENDPOINT_CHARACTERS, KankaResponseCharacters.class, request);
 	}
 
 	@Override
 	public KankaCharacter getCharacter(long id) throws IOException, URISyntaxException {
-		return makeReadEntityRequest(ENDPOINT_CHARACTER, id, KankaCharacter.class);
+		return readEntity(ENDPOINT_CHARACTER, KankaCharacter.class, id);
 	}
 
 	@Override
 	public KankaCharacter createCharacter(KankaCharacter character) throws IOException, URISyntaxException {
-		return makeCreateEntityRequest(ENDPOINT_CHARACTER, character, KankaCharacter.class);
+		return createEntity(ENDPOINT_CHARACTER, KankaCharacter.class, character);
 	}
 
 	@Override
 	public KankaCharacter updateCharacter(KankaCharacter character) throws IOException, URISyntaxException {
-		return makeUpdateEntityRequest(ENDPOINT_CHARACTER, character, KankaCharacter.class);
+		return updateEntity(ENDPOINT_CHARACTER, KankaCharacter.class, character);
 	}
 
 	@Override
 	public void deleteCharacter(long id) throws IOException, URISyntaxException {
-		makeDeleteEntityRequest(ENDPOINT_CHARACTER, id);
+		deleteEntity(ENDPOINT_CHARACTER, id);
 	}
 
 	@Override
 	public KankaResponseLocations getLocations(EntityRequest request) throws IOException, URISyntaxException {
-		return makeReadEntitiesRequest(ENDPOINT_LOCATIONS, request, KankaResponseLocations.class);
+		return readEntities(ENDPOINT_LOCATIONS, KankaResponseLocations.class, request);
 	}
 
 	@Override
 	public KankaLocation getLocation(long id) throws IOException, URISyntaxException {
-		return makeReadEntityRequest(ENDPOINT_LOCATION, id, KankaLocation.class);
+		return readEntity(ENDPOINT_LOCATION, KankaLocation.class, id);
 	}
 
 	@Override
 	public KankaLocation createLocation(KankaLocation location) throws IOException, URISyntaxException {
-		return makeCreateEntityRequest(ENDPOINT_LOCATIONS, location, KankaLocation.class);
+		return createEntity(ENDPOINT_LOCATIONS, KankaLocation.class, location);
 	}
 
 	@Override
 	public KankaLocation updateLocation(KankaLocation location) throws IOException, URISyntaxException {
-		return makeUpdateEntityRequest(ENDPOINT_LOCATION, location, KankaLocation.class);
+		return updateEntity(ENDPOINT_LOCATION, KankaLocation.class, location);
 	}
 
 	@Override
 	public void deleteLocation(long id) throws IOException, URISyntaxException {
-		makeDeleteEntityRequest(ENDPOINT_LOCATION, id);
+		deleteEntity(ENDPOINT_LOCATION, id);
 	}
 
 	@Override
-	public KankaResponseNotes getEntityNotes(long entityId) throws IOException, URISyntaxException {
-		return null;
+	public KankaResponseNotes getEntityNotes(long parentId) throws IOException, URISyntaxException {
+		return readEntities(ENDPOINT_ENTITY_NOTES, KankaResponseNotes.class, parentId);
 	}
 
 	@Override
-	public KankaEntityNote getEntityNote(long entityId, long noteId) throws IOException, URISyntaxException {
-		return null;
+	public KankaEntityNote getEntityNote(long parentId, long noteId) throws IOException, URISyntaxException {
+		return readEntity(ENDPOINT_ENTITY_NOTE, KankaEntityNote.class, parentId, noteId);
 	}
 
 	@Override
-	public KankaEntityNote createEntityNote(long entityId, KankaEntityNote note) throws IOException, URISyntaxException {
-		return null;
+	public KankaEntityNote createEntityNote(long parentId, KankaEntityNote note) throws IOException, URISyntaxException {
+		return createEntity(ENDPOINT_ENTITY_NOTES, KankaEntityNote.class, parentId, note);
 	}
 
 	@Override
-	public KankaEntityNote updateEntityNote(long entityId, KankaEntityNote note) throws IOException, URISyntaxException {
-		return null;
+	public KankaEntityNote updateEntityNote(long parentId, KankaEntityNote note) throws IOException, URISyntaxException {
+		return updateEntity(ENDPOINT_ENTITY_NOTE, KankaEntityNote.class, parentId, note);
 	}
 
 	@Override
-	public void deleteEntityNote(long id) throws IOException, URISyntaxException {
-
+	public void deleteEntityNote(long parentId, long noteId) throws IOException, URISyntaxException {
+		deleteEntity(ENDPOINT_ENTITY_NOTE, parentId, noteId);
 	}
 
 	/**
@@ -152,26 +152,47 @@ public class KankaClientImpl implements KankaClient {
 		return url;
 	}
 
-	private <T extends KankaResponse> T makeReadEntitiesRequest(String endpoint, EntityRequest request, Class<T> type) throws IOException, URISyntaxException {
+	private <T extends KankaEntity> T createEntity(String endpoint, Class<T> type, KankaEntity entity) throws IOException, URISyntaxException {
+		Preconditions.checkNotNull(entity, "The kanka entity cannot be null");
+		String json = makeRequest(HttpMethod.POST, host + endpoint, entity);
+		return type.cast(mapper.readValue(getDataFieldFromJsonStr(json), type));
+	}
+
+	private <T extends KankaEntity> T createEntity(String endpoint, Class<T> type, long entityId, KankaEntity entity) throws IOException, URISyntaxException {
+		Preconditions.checkArgument(entityId > 0, "The entity id must be greater than 0");
+		Preconditions.checkNotNull(entity, "The kanka entity cannot be null");
+		String json = makeRequest(HttpMethod.POST, String.format(host + endpoint, entityId), entity);
+		return type.cast(mapper.readValue(getDataFieldFromJsonStr(json), type));
+	}
+
+	private <T extends KankaEntity> T readEntity(String endpoint, Class<T> type, long id) throws IOException, URISyntaxException {
+		Preconditions.checkArgument(id > 0, "The kanka entity id must be greater than 0");
+		String json = makeRequest(HttpMethod.GET, String.format(host + endpoint, id), null);
+		return type.cast(mapper.readValue(getDataFieldFromJsonStr(json), type));
+	}
+
+	private <T extends KankaEntity> T readEntity(String endpoint, Class<T> type, long entityId, long id) throws IOException, URISyntaxException {
+		Preconditions.checkArgument(entityId > 0, "The kanka entity id must be greater than 0");
+		Preconditions.checkArgument(id > 0, "The id must be greater than 0");
+
+		String json = makeRequest(HttpMethod.GET, String.format(host + endpoint, entityId, id), null);
+		return type.cast(mapper.readValue(getDataFieldFromJsonStr(json), type));
+	}
+
+	private <T extends KankaResponse> T readEntities(String endpoint, Class<T> type, EntityRequest request) throws IOException, URISyntaxException {
 		Preconditions.checkNotNull(request, "The entity request cannot be null");
 		String url = getURLFromEntityRequest(request, host + endpoint);
 		String json = makeRequest(HttpMethod.GET, url, null);
 		return type.cast(mapper.readValue(json, type));
 	}
 
-	private <T extends KankaEntity> T makeCreateEntityRequest(String endpoint, KankaEntity entity, Class<T> type) throws IOException, URISyntaxException {
-		Preconditions.checkNotNull(entity, "The kanka entity cannot be null");
-		String json = makeRequest(HttpMethod.POST, host + endpoint, entity);
-		return type.cast(mapper.readValue(getDataFieldFromJsonStr(json), type));
+	private <T extends KankaResponse> T readEntities(String endpoint, Class<T> type, long entityId) throws IOException, URISyntaxException {
+		Preconditions.checkArgument(entityId > 0, "The entity id must be greater than 0");
+		String json = makeRequest(HttpMethod.GET, String.format(host + endpoint, entityId), null);
+		return type.cast(mapper.readValue(json, type));
 	}
 
-	private <T extends KankaEntity> T makeReadEntityRequest(String endpoint, long id, Class<T> type) throws IOException, URISyntaxException {
-		Preconditions.checkArgument(id > 0, "The kanka entity id must be greater than 0");
-		String json = makeRequest(HttpMethod.GET, String.format(host + endpoint, id), null);
-		return type.cast(mapper.readValue(getDataFieldFromJsonStr(json), type));
-	}
-
-	private <T extends KankaEntity> T makeUpdateEntityRequest(String endpoint, KankaEntity entity, Class<T> type) throws IOException, URISyntaxException {
+	private <T extends KankaEntity> T updateEntity(String endpoint, Class<T> type, KankaEntity entity) throws IOException, URISyntaxException {
 		Preconditions.checkNotNull(entity, "The kanka entity cannot be null");
 		Preconditions.checkNotNull(entity.getId(), "The kanka entity id cannot be null");
 
@@ -179,9 +200,23 @@ public class KankaClientImpl implements KankaClient {
 		return type.cast(mapper.readValue(getDataFieldFromJsonStr(json), type));
 	}
 
-	private void makeDeleteEntityRequest(String endpoint, long id) throws IOException, URISyntaxException {
+	private <T extends KankaEntity> T updateEntity(String endpoint, Class<T> type, long parentId, KankaEntity entity) throws IOException, URISyntaxException {
+		Preconditions.checkArgument(parentId > 0, "The entity id must be greater than 0");
+		Preconditions.checkNotNull(entity, "The kanka entity cannot be null");
+
+		String json = makeRequest(HttpMethod.PATCH, String.format(host + endpoint, parentId, entity.getId()), entity);
+		return type.cast(mapper.readValue(getDataFieldFromJsonStr(json), type));
+	}
+
+	private void deleteEntity(String endpoint, long id) throws IOException, URISyntaxException {
 		Preconditions.checkArgument(id > 0, "The kanka entity id must be greater than 0");
 		makeRequest(HttpMethod.DELETE, String.format(host + endpoint, id), null);
+	}
+
+	private void deleteEntity(String endpoint, long parentId, long id) throws IOException, URISyntaxException {
+		Preconditions.checkArgument(parentId > 0, "The kanka entity id must be greater than 0");
+		Preconditions.checkArgument(id > 0, "The kanka entity id must be greater than 0");
+		makeRequest(HttpMethod.DELETE, String.format(host + endpoint, parentId, id), null);
 	}
 
 	/**

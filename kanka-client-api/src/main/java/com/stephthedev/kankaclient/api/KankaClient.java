@@ -22,9 +22,9 @@ public interface KankaClient {
     KankaLocation updateLocation(KankaLocation location) throws IOException, URISyntaxException;
     void deleteLocation(long id) throws IOException, URISyntaxException;
 
-    KankaResponseNotes getEntityNotes(long entityId) throws IOException, URISyntaxException;
-    KankaEntityNote getEntityNote(long entityId, long noteId) throws IOException, URISyntaxException;
-    KankaEntityNote createEntityNote(long entityId, KankaEntityNote note) throws IOException, URISyntaxException;
-    KankaEntityNote updateEntityNote(long entityId, KankaEntityNote note) throws IOException, URISyntaxException;
-    void deleteEntityNote(long id) throws IOException, URISyntaxException;
+    KankaResponseNotes getEntityNotes(long parentId) throws IOException, URISyntaxException;
+    KankaEntityNote getEntityNote(long parentId, long noteId) throws IOException, URISyntaxException;
+    KankaEntityNote createEntityNote(long parentId, KankaEntityNote note) throws IOException, URISyntaxException;
+    KankaEntityNote updateEntityNote(long parentId, KankaEntityNote note) throws IOException, URISyntaxException;
+    void deleteEntityNote(long parentId, long noteId) throws IOException, URISyntaxException;
 }

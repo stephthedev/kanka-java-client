@@ -1,8 +1,8 @@
 package com.stephthedev.kankaclient.impl;
 
-import com.stephthedev.kanka.generated.api.KankaCharacter;
-import com.stephthedev.kanka.generated.api.KankaResponseCharacters;
-import com.stephthedev.kankaclient.api.EntityRequest;
+import com.stephthedev.kanka.generated.entities.KankaCharacter;
+import com.stephthedev.kankaclient.api.EntitiesResponse;
+import com.stephthedev.kankaclient.api.EntitiesRequest;
 import com.stephthedev.kankaclient.api.KankaClient;
 import org.junit.Assume;
 import org.junit.Before;
@@ -41,7 +41,7 @@ public class KankaClientImplIT {
 
     @Test
     public void testGetAllCharacters() throws IOException, URISyntaxException {
-        KankaResponseCharacters response = client.getCharacters(new EntityRequest.Builder().build());
+        EntitiesResponse<KankaCharacter> response = client.getCharacters(new EntitiesRequest.Builder().build());
         assertNotNull(response);
         assertFalse(response.getData().isEmpty());
     }

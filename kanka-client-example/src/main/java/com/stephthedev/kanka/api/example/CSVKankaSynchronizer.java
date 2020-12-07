@@ -6,8 +6,11 @@ import com.fasterxml.jackson.dataformat.csv.CsvMapper;
 import com.fasterxml.jackson.dataformat.csv.CsvSchema;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
-import com.stephthedev.kanka.generated.api.*;
-import com.stephthedev.kankaclient.api.EntityRequest;
+import com.stephthedev.kanka.generated.entities.KankaCharacter;
+import com.stephthedev.kanka.generated.entities.KankaEntityNote;
+import com.stephthedev.kanka.generated.entities.KankaLocation;
+import com.stephthedev.kankaclient.api.EntitiesResponse;
+import com.stephthedev.kankaclient.api.EntitiesRequest;
 import com.stephthedev.kankaclient.api.KankaClient;
 import com.stephthedev.kankaclient.impl.KankaClientImpl;
 
@@ -43,11 +46,11 @@ public class CSVKankaSynchronizer {
 
     Map<String, KankaCharacter> getAllCharacters() throws IOException, URISyntaxException {
         List<KankaCharacter> characters = new ArrayList<>();
-        KankaResponseCharacters response = client.getCharacters(new EntityRequest.Builder().build());
+        EntitiesResponse<KankaCharacter> response = client.getCharacters(new EntitiesRequest.Builder().build());
         characters.addAll(response.getData());
 
         while (response.getLinks().getNext() != null) {
-            EntityRequest request = new EntityRequest.Builder()
+            EntitiesRequest request = new EntitiesRequest.Builder()
                     .withLink(response.getLinks().getNext())
                     .build();
             response = client.getCharacters(request);
@@ -60,11 +63,11 @@ public class CSVKankaSynchronizer {
 
     Map<String, KankaLocation> getAllLocations() throws IOException, URISyntaxException {
         List<KankaLocation> locations = new ArrayList<>();
-        KankaResponseLocations response = client.getLocations(new EntityRequest.Builder().build());
+        EntitiesResponse<KankaLocation> response = client.getLocations(new EntitiesRequest.Builder().build());
         locations.addAll(response.getData());
 
         while (response.getLinks().getNext() != null) {
-            EntityRequest request = new EntityRequest.Builder()
+            EntitiesRequest request = new EntitiesRequest.Builder()
                     .withLink(response.getLinks().getNext())
                     .build();
             response = client.getLocations(request);
@@ -134,12 +137,12 @@ public class CSVKankaSynchronizer {
         final String noteName = "GM Notes";
         KankaEntityNote note = (KankaEntityNote) new KankaEntityNote.KankaEntityNoteBuilder<>()
                 .withVisibility("admin")
-                .withEntry(text)
+                .withEntry(text.replaceAll("\n", "<br />"))
                 .withEntityId(parentId)
                 .withName(noteName)
                 .build();
 
-        KankaResponseNotes response = client.getEntityNotes(parentId);
+        EntitiesResponse<KankaEntityNote> response = client.getEntityNotes(parentId);
         Optional<KankaEntityNote> opt = response.getData().stream()
                 .filter(e -> noteName.equalsIgnoreCase(e.getName()))
                 .findFirst();

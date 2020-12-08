@@ -3,8 +3,9 @@ package com.stephthedev.kankaclient.api;
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.stephthedev.kanka.generated.entities.KankaCharacter;
-import com.stephthedev.kanka.generated.hateoas.KankaLinks;
-import com.stephthedev.kanka.generated.hateoas.KankaMeta;
+import com.stephthedev.kankaclient.api.entities.EntitiesResponse;
+import com.stephthedev.kankaclient.api.entities.Links;
+import com.stephthedev.kankaclient.api.entities.Meta;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -41,15 +42,15 @@ public class EntitiesResponseDeserializationTest {
     @Test
     public void testMeta() throws IOException {
         assertNotNull(response.getMeta());
-        KankaMeta meta = response.getMeta();
-        assertEquals(68, meta.getTotal().intValue());
+        Meta meta = response.getMeta();
+        assertEquals(68, meta.getTotal());
         assertEquals("http://kanka.io/api/1.0/campaigns/13936/characters", meta.getPath());
     }
 
     @Test
     public void testLinks() throws Exception {
         assertNotNull(response.getLinks());
-        KankaLinks links = response.getLinks();
+        Links links = response.getLinks();
 
         assertNotNull(links.getFirst());
         assertNotNull(links.getNext());

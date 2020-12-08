@@ -1,8 +1,6 @@
-package com.stephthedev.kankaclient.api;
+package com.stephthedev.kankaclient.api.entities;
 
 import com.stephthedev.kanka.generated.entities.KankaEntity;
-import com.stephthedev.kanka.generated.hateoas.KankaLinks;
-import com.stephthedev.kanka.generated.hateoas.KankaMeta;
 
 import java.util.List;
 
@@ -18,19 +16,19 @@ import java.util.List;
  * @param <T>
  */
 public class EntitiesResponse<T extends KankaEntity> {
-    public KankaMeta getMeta() {
+    public Meta getMeta() {
         return meta;
     }
 
-    public void setMeta(KankaMeta meta) {
+    public void setMeta(Meta meta) {
         this.meta = meta;
     }
 
-    public KankaLinks getLinks() {
+    public Links getLinks() {
         return links;
     }
 
-    public void setLinks(KankaLinks links) {
+    public void setLinks(Links links) {
         this.links = links;
     }
 
@@ -42,7 +40,7 @@ public class EntitiesResponse<T extends KankaEntity> {
         this.data = data;
     }
 
-    private KankaMeta meta;
-    private KankaLinks links;
+    private Meta meta;
+    private Links links;
     private List<T> data;
 }

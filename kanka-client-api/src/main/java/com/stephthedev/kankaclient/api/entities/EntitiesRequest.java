@@ -1,4 +1,4 @@
-package com.stephthedev.kankaclient.api;
+package com.stephthedev.kankaclient.api.entities;
 
 /**
  * Request an entity either by page number or link

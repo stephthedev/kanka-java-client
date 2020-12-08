@@ -1,8 +1,8 @@
 package com.stephthedev.kankaclient.impl;
 
 import com.stephthedev.kanka.generated.entities.KankaCharacter;
-import com.stephthedev.kankaclient.api.EntitiesResponse;
-import com.stephthedev.kankaclient.api.EntitiesRequest;
+import com.stephthedev.kankaclient.api.entities.EntitiesResponse;
+import com.stephthedev.kankaclient.api.entities.EntitiesRequest;
 import com.stephthedev.kankaclient.api.KankaClient;
 import org.junit.Assume;
 import org.junit.Before;

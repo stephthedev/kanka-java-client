@@ -9,8 +9,8 @@ import com.google.common.base.Strings;
 import com.stephthedev.kanka.generated.entities.KankaCharacter;
 import com.stephthedev.kanka.generated.entities.KankaEntityNote;
 import com.stephthedev.kanka.generated.entities.KankaLocation;
-import com.stephthedev.kankaclient.api.EntitiesResponse;
-import com.stephthedev.kankaclient.api.EntitiesRequest;
+import com.stephthedev.kankaclient.api.entities.EntitiesResponse;
+import com.stephthedev.kankaclient.api.entities.EntitiesRequest;
 import com.stephthedev.kankaclient.api.KankaClient;
 import com.stephthedev.kankaclient.impl.KankaClientImpl;
 

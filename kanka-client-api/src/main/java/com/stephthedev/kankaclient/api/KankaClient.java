@@ -3,6 +3,8 @@ package com.stephthedev.kankaclient.api;
 import com.stephthedev.kanka.generated.entities.KankaCharacter;
 import com.stephthedev.kanka.generated.entities.KankaEntityNote;
 import com.stephthedev.kanka.generated.entities.KankaLocation;
+import com.stephthedev.kankaclient.api.entities.EntitiesRequest;
+import com.stephthedev.kankaclient.api.entities.EntitiesResponse;
 
 import java.io.IOException;
 import java.net.URISyntaxException;

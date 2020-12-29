@@ -36,7 +36,7 @@
                 <artifactId>jsonschema2pojo-maven-plugin</artifactId>
                 <version>1.0.2</version>
                 <configuration>
-                    <sourceDirectory>${basedir}/src/main/resources/schema</sourceDirectory>
+                    <sourceDirectory>${basedir}/src/main/resources/schema/kanka</sourceDirectory>
                     <targetPackage>com.stephthedev.kanka.generated</targetPackage>
                     <removeOldOutput>true</removeOldOutput>
                     <generateBuilders>true</generateBuilders>

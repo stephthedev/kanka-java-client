@@ -11,6 +11,7 @@ import com.stephthedev.kankaclient.api.entities.EntitiesResponse;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.util.Optional;
 
 /**
  * Implementation of Kanka client
@@ -21,7 +22,7 @@ public class KankaClientImpl implements KankaClient {
 	private static final String ENDPOINT_CHARACTER = "/characters/%d";
 	private static final String ENDPOINT_CHARACTERS = "/characters";
 
-	private static final String ENDPOINT_LOCATION = "/location/%id";
+	private static final String ENDPOINT_LOCATION = "/locations/%d";
 	private static final String ENDPOINT_LOCATIONS = "/locations";
 
 	private static final String ENDPOINT_ENTITY_NOTE = "/entities/%d/entity_notes/%d";
@@ -44,77 +45,77 @@ public class KankaClientImpl implements KankaClient {
 
 	@Override
 	public EntitiesResponse<KankaCharacter> getCharacters(EntitiesRequest request) throws IOException, URISyntaxException {
-		return client.readEntities(ENDPOINT_CHARACTERS, KankaCharacter.class, request);
+		return client.readEntities(ENDPOINT_CHARACTERS, KankaCharacter.class, Optional.empty(), request);
 	}
 
 	@Override
 	public KankaCharacter getCharacter(long id) throws IOException, URISyntaxException {
-		return client.readEntity(ENDPOINT_CHARACTER, KankaCharacter.class, id);
+		return client.readEntity(ENDPOINT_CHARACTER, KankaCharacter.class, Optional.empty(), id);
 	}
 
 	@Override
 	public KankaCharacter createCharacter(KankaCharacter character) throws IOException, URISyntaxException {
-		return client.createEntity(ENDPOINT_CHARACTERS, KankaCharacter.class, character);
+		return client.createEntity(ENDPOINT_CHARACTERS, KankaCharacter.class, Optional.empty(), character);
 	}
 
 	@Override
 	public KankaCharacter updateCharacter(KankaCharacter character) throws IOException, URISyntaxException {
-		return client.updateEntity(ENDPOINT_CHARACTER, KankaCharacter.class, character);
+		return client.updateEntity(ENDPOINT_CHARACTER, KankaCharacter.class, Optional.empty(), character);
 	}
 
 	@Override
 	public void deleteCharacter(long id) throws IOException, URISyntaxException {
-		client.deleteEntity(ENDPOINT_CHARACTER, id);
+		client.deleteEntity(ENDPOINT_CHARACTER, Optional.empty(), id);
 	}
 
 	@Override
 	public EntitiesResponse<KankaLocation> getLocations(EntitiesRequest request) throws IOException, URISyntaxException {
-		return client.readEntities(ENDPOINT_LOCATIONS, KankaLocation.class, request);
+		return client.readEntities(ENDPOINT_LOCATIONS, KankaLocation.class, Optional.empty(), request);
 	}
 
 	@Override
 	public KankaLocation getLocation(long id) throws IOException, URISyntaxException {
-		return client.readEntity(ENDPOINT_LOCATION, KankaLocation.class, id);
+		return client.readEntity(ENDPOINT_LOCATION, KankaLocation.class, Optional.empty(), id);
 	}
 
 	@Override
 	public KankaLocation createLocation(KankaLocation location) throws IOException, URISyntaxException {
-		return client.createEntity(ENDPOINT_LOCATIONS, KankaLocation.class, location);
+		return client.createEntity(ENDPOINT_LOCATIONS, KankaLocation.class, Optional.empty(), location);
 	}
 
 	@Override
 	public KankaLocation updateLocation(KankaLocation location) throws IOException, URISyntaxException {
-		return client.updateEntity(ENDPOINT_LOCATION, KankaLocation.class, location);
+		return client.updateEntity(ENDPOINT_LOCATION, KankaLocation.class, Optional.empty(), location);
 	}
 
 	@Override
 	public void deleteLocation(long id) throws IOException, URISyntaxException {
-		client.deleteEntity(ENDPOINT_LOCATION, id);
+		client.deleteEntity(ENDPOINT_LOCATION, Optional.empty(), id);
 	}
 
 	@Override
 	public EntitiesResponse<KankaEntityNote> getEntityNotes(long parentId) throws IOException, URISyntaxException {
-		return client.readEntities(ENDPOINT_ENTITY_NOTES, KankaEntityNote.class, parentId);
+		return client.readEntities(ENDPOINT_ENTITY_NOTES, KankaEntityNote.class, Optional.empty(), null);
 	}
 
 	@Override
 	public KankaEntityNote getEntityNote(long parentId, long noteId) throws IOException, URISyntaxException {
-		return client.readEntity(ENDPOINT_ENTITY_NOTE, KankaEntityNote.class, parentId, noteId);
+		return client.readEntity(ENDPOINT_ENTITY_NOTE, KankaEntityNote.class, Optional.of(parentId), noteId);
 	}
 
 	@Override
 	public KankaEntityNote createEntityNote(long parentId, KankaEntityNote note) throws IOException, URISyntaxException {
-		return client.createEntity(ENDPOINT_ENTITY_NOTES, KankaEntityNote.class, parentId, note);
+		return client.createEntity(ENDPOINT_ENTITY_NOTES, KankaEntityNote.class, Optional.of(parentId), note);
 	}
 
 	@Override
 	public KankaEntityNote updateEntityNote(long parentId, KankaEntityNote note) throws IOException, URISyntaxException {
-		return client.updateEntity(ENDPOINT_ENTITY_NOTE, KankaEntityNote.class, parentId, note);
+		return client.updateEntity(ENDPOINT_ENTITY_NOTE, KankaEntityNote.class, Optional.of(parentId), note);
 	}
 
 	@Override
 	public void deleteEntityNote(long parentId, long noteId) throws IOException, URISyntaxException {
-		client.deleteEntity(ENDPOINT_ENTITY_NOTE, parentId, noteId);
+		client.deleteEntity(ENDPOINT_ENTITY_NOTE, Optional.of(parentId), noteId);
 	}
 
 	public static class Builder {

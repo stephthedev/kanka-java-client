@@ -1,17 +1,11 @@
 package com.stephthedev.kankaclient.impl;
 
 import com.stephthedev.kanka.generated.entities.KankaCharacter;
-import com.stephthedev.kankaclient.api.entities.EntitiesResponse;
+import com.stephthedev.kanka.generated.entities.KankaEntity;
 import com.stephthedev.kankaclient.api.entities.EntitiesRequest;
-import com.stephthedev.kankaclient.api.KankaClient;
-import org.junit.Assume;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TestName;
+import com.stephthedev.kankaclient.api.entities.EntitiesResponse;
 
 import java.io.IOException;
-import java.net.URISyntaxException;
 
 import static org.junit.Assert.*;
 
@@ -19,43 +13,24 @@ import static org.junit.Assert.*;
  * Integration tests that only run if an auth token and campaign id are specified in the environment.
  * Note: This creates/modifies real data in Kanka. Use a dummy campaign.
  */
-public class KankaClientImplIT {
+public class KankaCharacterIT extends BaseIT {
 
-    KankaClient client;
-
-    @Rule
-    public TestName testName = new TestName();
-
-    @Before
-    public void setUp() {
-        String authToken = System.getenv("auth.token");
-        String campaignId = System.getenv("campaign.id");
-        Assume.assumeNotNull(authToken);
-        Assume.assumeNotNull(campaignId);
-
-        client = new KankaClientImpl.Builder()
-                .withAuthToken(authToken)
-                .withCampaignId(Integer.parseInt(campaignId))
-                .build();
-    }
-
-    @Test
-    public void testGetAllCharacters() throws IOException, URISyntaxException {
+    public void testGetAll() throws Exception {
         EntitiesResponse<KankaCharacter> response = client.getCharacters(new EntitiesRequest.Builder().build());
         assertNotNull(response);
         assertFalse(response.getData().isEmpty());
     }
 
-    @Test
-    public void testGetCharacter() throws IOException, URISyntaxException {
+    @Override
+    public void testGet() throws Exception {
         KankaCharacter character = client.getCharacter(310019);
         assertNotNull(character);
         assertEquals("Character1", character.getName());
     }
 
-    @Test
-    public void testCreateCharacter() throws IOException, URISyntaxException {
-        KankaCharacter character = generateCharacter();
+    @Override
+    public void testCreate() throws Exception {
+        KankaCharacter character = (KankaCharacter) generateEntity();
         KankaCharacter response = client.createCharacter(character);
         assertNotNull(response);
         assertEquals(character.getName(), response.getName());
@@ -63,8 +38,8 @@ public class KankaClientImplIT {
         assertNotNull("Character was not successfully created", client.getCharacter(response.getId()));
     }
 
-    @Test
-    public void testUpdateCharacter() throws IOException, URISyntaxException {
+    @Override
+    public void testUpdate() throws Exception {
         KankaCharacter origCharacter = client.getCharacter(310019);
         String origEntry = origCharacter.getEntry();
         String seed = System.currentTimeMillis() + "";
@@ -81,9 +56,9 @@ public class KankaClientImplIT {
         assertTrue(response.getEntry().contains(seed));
     }
 
-    @Test
-    public void testDeleteCharacter() throws IOException, URISyntaxException {
-        KankaCharacter character = generateCharacter();
+    @Override
+    public void testDelete() throws Exception {
+        KankaCharacter character = (KankaCharacter) generateEntity();
         KankaCharacter createResp = client.createCharacter(character);
         assertNotNull(createResp);
 
@@ -97,7 +72,8 @@ public class KankaClientImplIT {
         }
     }
 
-    private KankaCharacter generateCharacter() {
+    @Override
+    KankaEntity generateEntity() {
         KankaCharacter character = (KankaCharacter) new KankaCharacter.KankaCharacterBuilder<>()
                 .withName(testName.getMethodName() + System.nanoTime())
                 .withAge("10")

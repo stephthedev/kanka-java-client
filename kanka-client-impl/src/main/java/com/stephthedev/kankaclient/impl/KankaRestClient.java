@@ -1,6 +1,7 @@
 package com.stephthedev.kankaclient.impl;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -45,7 +46,8 @@ class KankaRestClient {
         this.campaignId = campaignId;
 
         this.httpClient = HttpClients.createDefault();
-        this.mapper = new ObjectMapper();
+        this.mapper = new ObjectMapper()
+                .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
     }
 
     <T extends KankaEntity> T createEntity(String endpoint, Class<T> responseType, Optional<Long> parentId, KankaEntity entity) throws IOException, URISyntaxException {
@@ -55,7 +57,7 @@ class KankaRestClient {
             Preconditions.checkArgument(parentId.get() > UNSET,
                     "The parent id should be greater than 0");
             endpoint = String.format(endpoint, parentId.get(), entity.getId());
-        } 
+        }
 
         String json = makeRequest(HttpMethod.POST, endpoint, entity);
         return responseType.cast(mapper.readValue(getDataFieldFromJsonStr(json), responseType));
@@ -172,6 +174,13 @@ class KankaRestClient {
             StatusLine status = response.getStatusLine();
             String error = "Unexpected status code ({%d}) and error ({%s})";
             String message = String.format(error, status.getStatusCode(), status.getReasonPhrase());
+
+            if (response.getEntity() != null) {
+                String json = EntityUtils.toString(response.getEntity());
+                message += "\n" + json;
+            }
+
+
             throw new IOException(message);
         }
     }

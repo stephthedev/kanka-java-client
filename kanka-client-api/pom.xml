@@ -42,6 +42,7 @@
                     <generateBuilders>true</generateBuilders>
                     <useInnerClassBuilders>true</useInnerClassBuilders>
                     <classNamePrefix>Kanka</classNamePrefix>
+                    <includeAdditionalProperties>false</includeAdditionalProperties>
                 </configuration>
                 <executions>
                     <execution>

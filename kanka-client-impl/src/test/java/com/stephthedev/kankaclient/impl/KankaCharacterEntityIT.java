@@ -8,10 +8,6 @@ import org.junit.Before;
 
 import java.util.function.Supplier;
 
-/**
- * Integration tests that only run if an auth token and campaign id are specified in the environment.
- * Note: This creates/modifies real data in Kanka. Use a dummy campaign.
- */
 public class KankaCharacterEntityIT extends BaseEntityIT {
 
     @Before

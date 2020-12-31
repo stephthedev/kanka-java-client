@@ -1,6 +1,5 @@
 package com.stephthedev.kankaclient.impl;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Preconditions;
 import com.stephthedev.kanka.generated.entities.KankaCharacter;
 import com.stephthedev.kanka.generated.entities.KankaEntityNote;
@@ -31,15 +30,12 @@ public class KankaClientImpl implements KankaClient {
 	String authToken;
 	String host;
 	long campaignId;
-	ObjectMapper mapper;
 	KankaRestClient client;
 
 	private KankaClientImpl(String host, String authToken, long campaignId) {
 		this.host = host;
 		this.authToken = authToken;
 		this.campaignId = campaignId;
-		this.mapper = new ObjectMapper();
-
 		this.client = new KankaRestClient(host, authToken, campaignId);
 	}
 

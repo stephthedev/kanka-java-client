@@ -9,6 +9,8 @@ The API is currently incomplete but found in [KankaClient.java](./kanka-client-a
 
 ### Examples
 #### Initalize the Client
+You will need an authentication token to use this API. The instructions can be found on the [Kanka.io documentation](https://kanka.io/en-US/docs/1.0/setup).
+
 ```java
 KankaClient client = new KankaClientImpl.Builder()
     .withAuthToken(authToken)
@@ -29,6 +31,7 @@ KankaClient client = new KankaClientImpl.Builder()
     
  System.out.println(character.getId());   //Null, because it hasn't been created
 ```
+Note: Due to a [limitation with jsonschema2pojo](https://github.com/joelittlejohn/jsonschema2pojo/issues/1104), a concrete builder is not returned from the Builder and instead you need to cast the built object.
 
 ##### Create a character
 ```java
@@ -71,6 +74,13 @@ EntitiesRequest request = new EntitiesRequest.Builder()
 ```java
 EntitiesRequest request = new EntitiesRequest.Builder()
     .withPage(3)
+    .build();
+```
+
+##### [HATEOAS Link Support](https://restfulapi.net/hateoas/)
+```java
+EntitiesRequest request = new EntitiesRequest.Builder()
+    .withLink("http://kanka.io/api/1.0/campaigns/98765/characters?page=6")
     .build();
 ```
 

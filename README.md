@@ -21,6 +21,7 @@ KankaClient client = new KankaClientImpl.Builder()
 #### Character CRUD
 
 ##### Generate a Character
+Note: Due to a [limitation with jsonschema2pojo](https://github.com/joelittlejohn/jsonschema2pojo/issues/1104), a concrete builder is not returned from the Builder and instead you need to cast the built object.
 ```java
  KankaCharacter character = (KankaCharacter) new KankaCharacter.KankaCharacterBuilder<>()
     .withName("Boken Brewfall")
@@ -31,7 +32,6 @@ KankaClient client = new KankaClientImpl.Builder()
     
  System.out.println(character.getId());   //Null, because it hasn't been created
 ```
-Note: Due to a [limitation with jsonschema2pojo](https://github.com/joelittlejohn/jsonschema2pojo/issues/1104), a concrete builder is not returned from the Builder and instead you need to cast the built object.
 
 ##### Create a character
 ```java
@@ -39,7 +39,7 @@ Note: Due to a [limitation with jsonschema2pojo](https://github.com/joelittlejoh
   System.out.println(character.getId());   //Non-null
 ```
 
-#### Get a single character by id
+##### Get a single character by id
 ```java
   KankaCharacter halflingCharacter = client.getCharacter(123456L);
 ```

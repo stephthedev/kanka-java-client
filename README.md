@@ -2,7 +2,7 @@
 A simple java client wrapper for the [Kanka.io API](https://kanka.io/en-US/docs/1.0/overview).
 
 ## Overview
-Coming Soon!
+A synchronous java client for making CRUD operations on Kanka.io entities. 
 
 ## Using the API
 The API is currently incomplete but found in [KankaClient.java](./kanka-client-api/src/main/java/com/stephthedev/kankaclient/api/KankaClient.java). 
@@ -16,19 +16,62 @@ KankaClient client = new KankaClientImpl.Builder()
     .build();
 ```
 
-#### Create Character
+#### Character CRUD
+
+##### Generate a Character
 ```java
  KankaCharacter character = (KankaCharacter) new KankaCharacter.KankaCharacterBuilder<>()
     .withName("Boken Brewfall")
     .withAge("254")
     .withSex("F")
-    .withEntry("Miner found with a black eye on the outskirts of Phandalin")
+    .withEntry("Dwarf miner found with a black eye on the outskirts of Phandalin")
     .build();
     
  System.out.println(character.getId());   //Null, because it hasn't been created
- 
- character = client.createCharacter(character);
- System.out.println(character.getId());   //Non-null
+```
+
+##### Create a character
+```java
+  character = client.createCharacter(character);
+  System.out.println(character.getId());   //Non-null
+```
+
+#### Get a single character by id
+```java
+  KankaCharacter halflingCharacter = client.getCharacter(123456L);
+```
+
+##### Get multiple characters
+```java
+  EntitiesRequest request = new EntitiesRequest.Builder().build()
+  EntitiesResponse<KankaCharacter> response = client.getCharacters(request);
+  List<KankaCharacter> characters = response.getData();
+```
+
+##### Update a character
+```java
+  character.setEntry(character.getEntry() + "Retired from mining to go back to brewing beer")
+  character.updateCharacter(character);
+```
+
+##### Delete a character
+```java
+  client.deleteCharacter(123456L);
+```
+
+#### Modify the get entities request
+##### [Last Sync](https://kanka.io/en-US/docs/1.0/last-sync)
+```java
+EntitiesRequest request = new EntitiesRequest.Builder()
+  .withLastSync("2019-03-21T19:17:42.207577")
+  .build();
+```
+
+##### [Pagination](https://kanka.io/en-US/docs/1.0/pagination)
+```java
+EntitiesRequest request = new EntitiesRequest.Builder()
+    .withPage(3)
+    .build();
 ```
 
 ## Contributing to the API

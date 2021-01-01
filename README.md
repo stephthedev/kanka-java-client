@@ -27,7 +27,7 @@ Note: Due to a [limitation with jsonschema2pojo](https://github.com/joelittlejoh
     .withName("Boken Brewfall")
     .withAge("254")
     .withSex("F")
-    .withEntry("Dwarf miner found with a black eye on the outskirts of Phandalin")
+    .withEntry("Dwarf miner")
     .build();
     
  System.out.println(character.getId());   //Null, because it hasn't been created

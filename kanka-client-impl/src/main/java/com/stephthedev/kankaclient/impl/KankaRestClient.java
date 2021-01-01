@@ -14,6 +14,7 @@ import org.apache.http.HttpStatus;
 import org.apache.http.StatusLine;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.*;
+import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
@@ -83,8 +84,7 @@ class KankaRestClient {
                     "The parent id should be greater than 0");
             endpoint = String.format(endpoint, parentId.get());
         }
-        String url = constructURL(request, endpoint);
-        String json = makeRequest(HttpMethod.GET, url, null);
+        String json = makeRequest(HttpMethod.GET, endpoint, null);
         JavaType entitiesResponseType = mapper.getTypeFactory()
                 .constructParametricType(EntitiesResponse.class, responseType);
         return mapper.readValue(json, entitiesResponseType);
@@ -118,20 +118,48 @@ class KankaRestClient {
         makeRequest(HttpMethod.DELETE, endpoint, null);
     }
 
+    private String makeRequest(HttpMethod httpMethod, String endpoint, KankaEntity kankaEntity)
+            throws IOException, URISyntaxException {
+        return makeRequest(httpMethod, endpoint, kankaEntity, null);
+    }
+
     /**
      *
      * @param httpMethod The http method to make
      * @param endpoint The partial endpoint to use (i.e. /characters)
+     * @param entitiesRequest The optional parameters to use when making this request
      * @return
      * @throws IOException
      */
-    private String makeRequest(HttpMethod httpMethod, String endpoint, KankaEntity kankaEntity) throws IOException, URISyntaxException {
+    private String makeRequest(HttpMethod httpMethod, String endpoint, KankaEntity kankaEntity, EntitiesRequest entitiesRequest)
+            throws IOException, URISyntaxException {
         Preconditions.checkNotNull(httpMethod, "The HTTP request cannot be null");
         Preconditions.checkNotNull(endpoint, "The http endpoint cannot be null");
 
         //Make the request
         HttpResponse response = null;
-        URI uri = new URI(host + endpoint);
+        URI uri = null;
+
+        if (entitiesRequest == null) {
+            uri = new URI(host + endpoint);
+        }
+
+        if (entitiesRequest != null) {
+            if (entitiesRequest.getLink() != null) {
+                uri = new URI(entitiesRequest.getLink());
+            } else {
+                //Set the host + path
+                URIBuilder uriBuilder = new URIBuilder().setHost(host)
+                        .setPath(endpoint);
+                if (entitiesRequest.getPage() > -1) {
+                    uriBuilder = uriBuilder.addParameter("page", entitiesRequest.getPage() + "");
+                }
+                if (entitiesRequest.getLastSync() != null) {
+                    uriBuilder = uriBuilder.addParameter("lastSync", entitiesRequest.getLastSync());
+                }
+                uri = uriBuilder.build();
+            }
+        }
         int expectedCode = -1;
 
         if (HttpMethod.POST.equals(httpMethod) || HttpMethod.PATCH.equals(httpMethod)) {
@@ -200,25 +228,5 @@ class KankaRestClient {
     private String getDataFieldFromJsonStr(String json) throws JsonProcessingException {
         ObjectNode node = mapper.readValue(json, ObjectNode.class);
         return node.get("data").toString();
-    }
-
-    /**
-     * Construct the URL given an endpoint and a request object.
-     * If the request has a page number, use that, otherwise, use the base endpoint
-     * @param request
-     * @param endpoint
-     * @return
-     */
-    private String constructURL(EntitiesRequest request, String endpoint) {
-        String url = endpoint;
-        if (request != null) {
-            if (request.getPage() > -1) {
-                //TODO: Pull the query param out
-                url = endpoint + "?page=" + request.getPage();
-            } else if (request.getLink() != null) {
-                url = request.getLink();
-            }
-        }
-        return url;
     }
 }

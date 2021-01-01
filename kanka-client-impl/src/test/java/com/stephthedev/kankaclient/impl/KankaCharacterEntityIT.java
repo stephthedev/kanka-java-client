@@ -6,8 +6,6 @@ import com.stephthedev.kankaclient.api.entities.EntitiesRequest;
 import com.stephthedev.kankaclient.api.entities.EntitiesResponse;
 import org.junit.Before;
 
-import java.util.function.Supplier;
-
 public class KankaCharacterEntityIT extends BaseEntityIT {
 
     @Before
@@ -30,55 +28,27 @@ public class KankaCharacterEntityIT extends BaseEntityIT {
     }
 
     @Override
-    public Supplier getAllEntitiesSupplier() throws Exception {
-        Supplier<EntitiesResponse<KankaCharacter>> s = () -> {
-            try {
-                return client.getCharacters(new EntitiesRequest.Builder().build());
-            } catch (Exception e) {
-                throw new RuntimeException(e);
-            }
-        };
-        return s;
+    public EntitiesResponse<KankaCharacter> getAllEntities(EntitiesRequest request) throws Exception {
+        return client.getCharacters(request);
     }
 
     @Override
-    public Supplier<KankaCharacter> getEntitySupplier() throws Exception {
-        Supplier<KankaCharacter> s = () -> {
-            try {
-                return client.getCharacter(knownEntity.getId());
-            } catch (Exception e) {
-                throw new RuntimeException(e);
-            }
-        };
-        return s;
+    public KankaCharacter getEntity() throws Exception {
+        return client.getCharacter(knownEntity.getId());
     }
 
     @Override
-    public Supplier<KankaCharacter> createEntitySupplier(KankaEntity entity) throws Exception {
-        Supplier<KankaCharacter> s = () -> {
-            try {
-                return client.createCharacter((KankaCharacter) entity);
-            } catch (Exception e) {
-                throw new RuntimeException(e);
-            }
-        };
-        return s;
+    public KankaCharacter createEntity(KankaEntity entity) throws Exception {
+        return client.createCharacter((KankaCharacter) entity);
     }
 
     @Override
-    public Supplier<KankaCharacter> updateEntitySupplier(KankaEntity entity) throws Exception {
-        return () -> {
-            try {
-                return client.updateCharacter((KankaCharacter) entity);
-            } catch (Exception e) {
-                throw new RuntimeException(e);
-            }
-        };
+    public KankaCharacter updateEntity(KankaEntity entity) throws Exception {
+        return client.updateCharacter((KankaCharacter) entity);
     }
 
     @Override
     public void deleteEntity(long id) throws Exception {
         client.deleteCharacter(id);
     }
-
 }

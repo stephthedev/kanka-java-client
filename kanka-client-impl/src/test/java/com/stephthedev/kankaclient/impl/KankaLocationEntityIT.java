@@ -6,16 +6,12 @@ import com.stephthedev.kankaclient.api.entities.EntitiesRequest;
 import com.stephthedev.kankaclient.api.entities.EntitiesResponse;
 import org.junit.Before;
 
-import java.util.function.Supplier;
-
 public class KankaLocationEntityIT extends BaseEntityIT {
-
-    private static final long KNOWN_ENTITY = 307917;
 
     @Before
     public void setUpKnownEntity() {
         knownEntity = new KankaLocation.KankaLocationBuilder<>()
-                .withId(KNOWN_ENTITY)
+                .withId(307917L)
                 .withName("Location1")
                 .build();
     }
@@ -31,48 +27,23 @@ public class KankaLocationEntityIT extends BaseEntityIT {
     }
 
     @Override
-    public Supplier getAllEntitiesSupplier() throws Exception {
-        Supplier<EntitiesResponse<KankaLocation>> s = () -> {
-            try {
-                return client.getLocations(new EntitiesRequest.Builder().build());
-            } catch (Exception e) {
-                throw new RuntimeException(e);
-            }
-        };
-        return s;
+    public EntitiesResponse<KankaLocation> getAllEntities(EntitiesRequest request) throws Exception {
+        return client.getLocations(request);
     }
 
     @Override
-    public Supplier<KankaLocation> getEntitySupplier() throws Exception {
-        return() -> {
-            try {
-                return client.getLocation(KNOWN_ENTITY);
-            } catch (Exception e) {
-                throw new RuntimeException(e);
-            }
-        };
+    public KankaLocation getEntity() throws Exception {
+        return client.getLocation(knownEntity.getId());
     }
 
     @Override
-    public Supplier<KankaLocation> createEntitySupplier(KankaEntity entity) throws Exception {
-        return () -> {
-            try {
-                return client.createLocation((KankaLocation) entity);
-            } catch (Exception e) {
-                throw new RuntimeException(e);
-            }
-        };
+    public KankaLocation createEntity(KankaEntity entity) throws Exception {
+        return client.createLocation((KankaLocation) entity);
     }
 
     @Override
-    public Supplier<KankaLocation> updateEntitySupplier(KankaEntity entity) throws Exception {
-        return () -> {
-            try {
-                return client.updateLocation((KankaLocation) entity);
-            } catch (Exception e) {
-                throw new RuntimeException(e);
-            }
-        };
+    public KankaLocation updateEntity(KankaEntity entity) throws Exception {
+        return client.updateLocation((KankaLocation) entity);
     }
 
     @Override

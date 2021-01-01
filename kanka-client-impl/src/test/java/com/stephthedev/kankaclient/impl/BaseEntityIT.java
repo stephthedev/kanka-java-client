@@ -2,15 +2,16 @@ package com.stephthedev.kankaclient.impl;
 
 import com.stephthedev.kanka.generated.entities.KankaEntity;
 import com.stephthedev.kankaclient.api.KankaClient;
+import com.stephthedev.kankaclient.api.entities.EntitiesRequest;
 import com.stephthedev.kankaclient.api.entities.EntitiesResponse;
-import org.junit.Assume;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.*;
 import org.junit.rules.TestName;
 
 import java.io.IOException;
-import java.util.function.Supplier;
+import java.time.ZonedDateTime;
+import java.util.List;
+import java.util.TimeZone;
+import java.util.stream.Collectors;
 
 import static org.junit.Assert.*;
 
@@ -20,9 +21,13 @@ import static org.junit.Assert.*;
  */
 public abstract class BaseEntityIT {
 
+    private static final long CAMPAIGN_ID = 46354L;
+
     KankaClient client;
+    private ZonedDateTime startZDT;
 
     protected KankaEntity knownEntity;
+
 
     @Rule
     public TestName testName = new TestName();
@@ -30,26 +35,31 @@ public abstract class BaseEntityIT {
     @Before
     public void setUp() {
         String authToken = System.getenv("auth.token");
-        String campaignId = System.getenv("campaign.id");
         Assume.assumeNotNull(authToken);
-        Assume.assumeNotNull(campaignId);
 
         client = new KankaClientImpl.Builder()
                 .withAuthToken(authToken)
-                .withCampaignId(Integer.parseInt(campaignId))
+                .withCampaignId(CAMPAIGN_ID)
                 .build();
+
+        startZDT = ZonedDateTime.now(TimeZone.getTimeZone("UTC").toZoneId());
+    }
+
+    @After
+    public void tearDown() {
+        deleteTestArtifacts();
     }
 
     @Test
     public void testGetAllEntities() throws Exception {
-        EntitiesResponse<? extends KankaEntity> response = getAllEntitiesSupplier().get();
+        EntitiesResponse<? extends KankaEntity> response = getAllEntities(new EntitiesRequest.Builder().build());
         assertNotNull(response);
         assertFalse(response.getData().isEmpty());
     }
 
     @Test
     public void testGetSingleEntity() throws Exception {
-        KankaEntity entity = getEntitySupplier().get();
+        KankaEntity entity = getEntity();
         assertNotNull(entity);
         assertEquals("Unexpected entity name", knownEntity.getName(), entity.getName());
     }
@@ -57,23 +67,23 @@ public abstract class BaseEntityIT {
     @Test
     public void testCreateEntity() throws Exception {
         KankaEntity entity = generateEntity();
-        KankaEntity response = createEntitySupplier(entity).get();
+        KankaEntity response = createEntity(entity);
         assertNotNull(response);
         assertEquals(entity.getName(), response.getName());
-        assertNotNull("Entity was not successfully created", response);
-        //TODO: Verify other properties
+        assertNotNull(response.getId());
+        assertTrue(response.getId() > 0);
     }
 
     @Test
     public void testUpdateEntity() throws Exception {
         //Retrieve entity
-        KankaEntity snapshotEntity = getEntitySupplier().get();
+        KankaEntity snapshotEntity = getEntity();
         String seed = System.currentTimeMillis() + "";
         String updatedEntryStr = snapshotEntity.getEntry() + "<br />" + seed;
 
         //Update character
         snapshotEntity.setEntry(updatedEntryStr);
-        KankaEntity response = updateEntitySupplier(snapshotEntity).get();
+        KankaEntity response = updateEntity(snapshotEntity);
 
         //Verify the text matches up
         assertNotNull(response);
@@ -84,7 +94,7 @@ public abstract class BaseEntityIT {
     public void testDeleteEntity() throws Exception {
         //Create a dummy entity
         KankaEntity entity = generateEntity();
-        KankaEntity response = createEntitySupplier(entity).get();
+        KankaEntity response = createEntity(entity);
         assertNotNull(response);
         assertNotNull(response.getId());
 
@@ -100,15 +110,37 @@ public abstract class BaseEntityIT {
         }
     }
 
+    private void deleteTestArtifacts() {
+        try {
+            //Get the artifacts from kanka
+            EntitiesResponse<? extends KankaEntity> artifacts =
+                    getAllEntities(new EntitiesRequest.Builder().withLastSync(startZDT.toString()).build());
+
+            //Get just the ids
+            List<Long> artifactIds = artifacts.getData().stream()
+                    .filter(k -> !k.getName().equals(knownEntity.getName()))
+                    .map(e -> e.getId())
+                    .collect(Collectors.toList());
+
+            //A bulk api would speed this up
+            for (Long id : artifactIds) {
+                deleteEntity(id);
+            }
+        } catch (Exception e) {
+            //Gobble the exception, it's okay if the artifacts aren't deleted
+            e.printStackTrace();
+        }
+    }
+
     abstract KankaEntity generateEntity();
 
-    public abstract Supplier<EntitiesResponse<KankaEntity>> getAllEntitiesSupplier() throws Exception;
+    public abstract EntitiesResponse<? extends KankaEntity> getAllEntities(EntitiesRequest request) throws Exception;
 
-    public abstract Supplier<? extends KankaEntity> getEntitySupplier() throws Exception;
+    public abstract KankaEntity getEntity() throws Exception;
 
-    public abstract Supplier<? extends KankaEntity> createEntitySupplier(KankaEntity entity) throws Exception;
+    public abstract KankaEntity createEntity(KankaEntity entity) throws Exception;
 
-    public abstract Supplier<? extends KankaEntity> updateEntitySupplier(KankaEntity entity) throws Exception;
+    public abstract KankaEntity updateEntity(KankaEntity entity) throws Exception;
 
     public abstract void deleteEntity(long id) throws Exception;
 

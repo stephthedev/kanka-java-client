@@ -1,11 +1,35 @@
 # kanka-java-client
-A simple java client wrapper for the [Kanka API](https://kanka.io/en-US/docs/1.0/overview).
+A simple java client wrapper for the [Kanka.io API](https://kanka.io/en-US/docs/1.0/overview).
 
 ## Overview
 Coming Soon!
 
 ## Using the API
 The API is currently incomplete but found in [KankaClient.java](./kanka-client-api/src/main/java/com/stephthedev/kankaclient/api/KankaClient.java). 
+
+### Examples
+#### Initalize the Client
+```java
+KankaClient client = new KankaClientImpl.Builder()
+    .withAuthToken(authToken)
+    .withCampaignId(CAMPAIGN_ID)
+    .build();
+```
+
+#### Create Character
+```java
+ KankaCharacter character = (KankaCharacter) new KankaCharacter.KankaCharacterBuilder<>()
+    .withName("Boken Brewfall")
+    .withAge("254")
+    .withSex("F")
+    .withEntry("Miner found with a black eye on the outskirts of Phandalin")
+    .build();
+    
+ System.out.println(character.getId());   //Null, because it hasn't been created
+ 
+ character = client.createCharacter(character);
+ System.out.println(character.getId());   //Non-null
+```
 
 ## Contributing to the API
 Send a PR with your changes for a quick review. 

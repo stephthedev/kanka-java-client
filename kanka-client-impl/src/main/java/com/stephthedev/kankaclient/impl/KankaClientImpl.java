@@ -90,8 +90,8 @@ public class KankaClientImpl implements KankaClient {
 	}
 
 	@Override
-	public EntitiesResponse<KankaEntityNote> getEntityNotes(long parentId) throws IOException, URISyntaxException {
-		return client.readEntities(ENDPOINT_ENTITY_NOTES, KankaEntityNote.class, Optional.empty(), null);
+	public EntitiesResponse<KankaEntityNote> getEntityNotes(long parentId, EntitiesRequest request) throws IOException, URISyntaxException {
+		return client.readEntities(ENDPOINT_ENTITY_NOTES, KankaEntityNote.class, Optional.of(parentId), request);
 	}
 
 	@Override

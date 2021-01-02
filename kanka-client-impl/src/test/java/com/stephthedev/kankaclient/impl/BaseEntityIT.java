@@ -19,7 +19,7 @@ import static org.junit.Assert.*;
  * Base CRUD entity tests that hit the production Kanka API.
  * TODO: These appear fairly inflexible for further testing. Can this be addressed?
  */
-public abstract class BaseEntityIT {
+public abstract class BaseEntityIT implements KankaCRUDOperations {
 
     private static final long CAMPAIGN_ID = 46354L;
 
@@ -133,15 +133,4 @@ public abstract class BaseEntityIT {
     }
 
     abstract KankaEntity generateEntity();
-
-    public abstract EntitiesResponse<? extends KankaEntity> getAllEntities(EntitiesRequest request) throws Exception;
-
-    public abstract KankaEntity getEntity() throws Exception;
-
-    public abstract KankaEntity createEntity(KankaEntity entity) throws Exception;
-
-    public abstract KankaEntity updateEntity(KankaEntity entity) throws Exception;
-
-    public abstract void deleteEntity(long id) throws Exception;
-
 }

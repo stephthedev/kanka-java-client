@@ -142,7 +142,7 @@ public class CSVKankaSynchronizer {
                 .withName(noteName)
                 .build();
 
-        EntitiesResponse<KankaEntityNote> response = client.getEntityNotes(parentId);
+        EntitiesResponse<KankaEntityNote> response = client.getEntityNotes(parentId, new EntitiesRequest.Builder().build());
         Optional<KankaEntityNote> opt = response.getData().stream()
                 .filter(e -> noteName.equalsIgnoreCase(e.getName()))
                 .findFirst();

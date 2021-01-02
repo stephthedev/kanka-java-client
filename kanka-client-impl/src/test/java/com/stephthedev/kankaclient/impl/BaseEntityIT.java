@@ -132,5 +132,14 @@ public abstract class BaseEntityIT implements KankaCRUDOperations {
         }
     }
 
+    /**
+     * Creates a new unique entity
+     * @return
+     */
     abstract KankaEntity generateEntity();
+
+    /**
+     * Sets up the known entity for use with update tests
+     */
+    abstract void setUpKnownEntity();
 }

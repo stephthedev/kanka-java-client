@@ -1,0 +1,22 @@
+{
+  "type" : "object",
+  "extends" : {
+    "$ref" : "entity.json"
+  },
+  "properties" : {
+    "type" : {
+      "type" : "string"
+    },
+    "location_id" : {
+      "type" : "string",
+      "format": "utc-millisec"
+    },
+    "family_id" : {
+      "type" : "string",
+      "format": "utc-millisec"
+    },
+    "image_url" : {
+      "type" : "string"
+    }
+  }
+}

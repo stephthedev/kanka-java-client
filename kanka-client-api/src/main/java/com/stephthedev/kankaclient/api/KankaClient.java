@@ -2,6 +2,7 @@ package com.stephthedev.kankaclient.api;
 
 import com.stephthedev.kanka.generated.entities.KankaCharacter;
 import com.stephthedev.kanka.generated.entities.KankaEntityNote;
+import com.stephthedev.kanka.generated.entities.KankaFamily;
 import com.stephthedev.kanka.generated.entities.KankaLocation;
 import com.stephthedev.kankaclient.api.entities.EntitiesRequest;
 import com.stephthedev.kankaclient.api.entities.EntitiesResponse;
@@ -25,6 +26,12 @@ public interface KankaClient {
     KankaLocation createLocation(KankaLocation location) throws IOException, URISyntaxException;
     KankaLocation updateLocation(KankaLocation location) throws IOException, URISyntaxException;
     void deleteLocation(long id) throws IOException, URISyntaxException;
+
+    EntitiesResponse<KankaFamily> getFamilies(EntitiesRequest request) throws IOException, URISyntaxException;
+    KankaFamily getFamily(long id) throws IOException, URISyntaxException;
+    KankaFamily createFamily(KankaFamily family) throws IOException, URISyntaxException;
+    KankaFamily updateFamily(KankaFamily family) throws IOException, URISyntaxException;
+    void deleteFamily(long id) throws IOException, URISyntaxException;
 
     EntitiesResponse<KankaEntityNote> getEntityNotes(long parentId, EntitiesRequest request) throws IOException, URISyntaxException;
     KankaEntityNote getEntityNote(long parentId, long noteId) throws IOException, URISyntaxException;

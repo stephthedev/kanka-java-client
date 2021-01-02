@@ -3,6 +3,7 @@ package com.stephthedev.kankaclient.impl;
 import com.google.common.base.Preconditions;
 import com.stephthedev.kanka.generated.entities.KankaCharacter;
 import com.stephthedev.kanka.generated.entities.KankaEntityNote;
+import com.stephthedev.kanka.generated.entities.KankaFamily;
 import com.stephthedev.kanka.generated.entities.KankaLocation;
 import com.stephthedev.kankaclient.api.KankaClient;
 import com.stephthedev.kankaclient.api.entities.EntitiesRequest;
@@ -18,14 +19,17 @@ import java.util.Optional;
  */
 public class KankaClientImpl implements KankaClient {
 
-	private static final String ENDPOINT_CHARACTER = "/characters/%d";
 	private static final String ENDPOINT_CHARACTERS = "/characters";
+	private static final String ENDPOINT_CHARACTER = ENDPOINT_CHARACTERS + "/%d";
 
-	private static final String ENDPOINT_LOCATION = "/locations/%d";
 	private static final String ENDPOINT_LOCATIONS = "/locations";
+	private static final String ENDPOINT_LOCATION = ENDPOINT_LOCATIONS + "/%d";
 
-	private static final String ENDPOINT_ENTITY_NOTE = "/entities/%d/entity_notes/%d";
+	private static final String ENDPOINT_FAMILIES = "/families";
+	private static final String ENDPOINT_FAMILY = ENDPOINT_FAMILIES + "/%d";
+
 	private static final String ENDPOINT_ENTITY_NOTES = "/entities/%d/entity_notes";
+	private static final String ENDPOINT_ENTITY_NOTE = ENDPOINT_ENTITY_NOTES + "/%d";
 
 	String authToken;
 	String host;
@@ -87,6 +91,31 @@ public class KankaClientImpl implements KankaClient {
 	@Override
 	public void deleteLocation(long id) throws IOException, URISyntaxException {
 		client.deleteEntity(ENDPOINT_LOCATION, Optional.empty(), id);
+	}
+
+	@Override
+	public EntitiesResponse<KankaFamily> getFamilies(EntitiesRequest request) throws IOException, URISyntaxException {
+		return client.readEntities(ENDPOINT_FAMILIES, KankaFamily.class, Optional.empty(), request);
+	}
+
+	@Override
+	public KankaFamily getFamily(long id) throws IOException, URISyntaxException {
+		return client.readEntity(ENDPOINT_FAMILY, KankaFamily.class, Optional.empty(), id);
+	}
+
+	@Override
+	public KankaFamily createFamily(KankaFamily family) throws IOException, URISyntaxException {
+		return client.createEntity(ENDPOINT_FAMILIES, KankaFamily.class, Optional.empty(), family);
+	}
+
+	@Override
+	public KankaFamily updateFamily(KankaFamily family) throws IOException, URISyntaxException {
+		return client.updateEntity(ENDPOINT_FAMILY, KankaFamily.class, Optional.empty(), family);
+	}
+
+	@Override
+	public void deleteFamily(long id) throws IOException, URISyntaxException {
+		client.deleteEntity(ENDPOINT_FAMILY, Optional.empty(), id);
 	}
 
 	@Override

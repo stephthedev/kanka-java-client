@@ -18,6 +18,7 @@ import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
+import org.tinylog.Logger;
 
 import java.io.IOException;
 import java.net.URI;
@@ -162,6 +163,8 @@ class KankaRestClient {
         }
         int expectedCode = -1;
 
+        Logger.debug(httpMethod + " " + endpoint);
+        Logger.debug("Entity JSON: " + mapper.writeValueAsString(kankaEntity));
         if (HttpMethod.POST.equals(httpMethod) || HttpMethod.PATCH.equals(httpMethod)) {
             HttpEntityEnclosingRequestBase httpReq = null;
             if (HttpMethod.POST.equals(httpMethod)) {
@@ -197,18 +200,16 @@ class KankaRestClient {
             }
 
             String json = EntityUtils.toString(response.getEntity());
+            Logger.debug("Kanka Response: " + json);
             return json;
         } else {
             StatusLine status = response.getStatusLine();
             String error = "Unexpected status code ({%d}) and error ({%s})";
             String message = String.format(error, status.getStatusCode(), status.getReasonPhrase());
-
             if (response.getEntity() != null) {
                 String json = EntityUtils.toString(response.getEntity());
-                message += "\n" + json;
+                Logger.error("Kanka Error Response: " + json);
             }
-
-
             throw new IOException(message);
         }
     }

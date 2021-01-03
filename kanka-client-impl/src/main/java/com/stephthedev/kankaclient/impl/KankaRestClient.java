@@ -54,38 +54,24 @@ class KankaRestClient {
 
     <T extends KankaEntity> T createEntity(String endpoint, Class<T> responseType, Optional<Long> parentId, KankaEntity entity) throws IOException, URISyntaxException {
         Preconditions.checkNotNull(entity, "The kanka entity cannot be null");
+        Preconditions.checkArgument(entity.getId() == null, "The entity cannot have an id" );
 
-        if (parentId.isPresent()) {
-            Preconditions.checkArgument(parentId.get() > UNSET,
-                    "The parent id should be greater than 0");
-            endpoint = String.format(endpoint, parentId.get(), entity.getId());
-        }
-
-        String json = makeRequest(HttpMethod.POST, endpoint, entity);
+        String entityEndpoint = constructEndpoint(endpoint, parentId);
+        String json = makeRequest(HttpMethod.POST, entityEndpoint, entity);
         return responseType.cast(mapper.readValue(getDataFieldFromJsonStr(json), responseType));
     }
 
     <T extends KankaEntity> T readEntity(String endpoint, Class<T> responseType, Optional<Long> parentId, long id) throws IOException, URISyntaxException {
         Preconditions.checkArgument(id > UNSET, "The kanka entity id must be greater than 0");
-        if (parentId.isPresent()) {
-            Preconditions.checkArgument(parentId.get() > UNSET,
-                    "The parent id should be greater than 0");
-            endpoint = String.format(endpoint, parentId.get(), id);
-        } else {
-            endpoint = String.format(endpoint, id);
-        }
 
-        String json = makeRequest(HttpMethod.GET, endpoint, null);
+        String entityEndpoint = constructEndpoint(endpoint, parentId, id);
+        String json = makeRequest(HttpMethod.GET, entityEndpoint, null);
         return responseType.cast(mapper.readValue(getDataFieldFromJsonStr(json), responseType));
     }
 
     EntitiesResponse readEntities(String endpoint, Class responseType, Optional<Long> parentId, EntitiesRequest request) throws IOException, URISyntaxException {
-        if (parentId.isPresent()) {
-            Preconditions.checkArgument(parentId.get() > UNSET,
-                    "The parent id should be greater than 0");
-            endpoint = String.format(endpoint, parentId.get());
-        }
-        String json = makeRequest(HttpMethod.GET, endpoint, null);
+        String entityEndpoint = constructEndpoint(endpoint, parentId);
+        String json = makeRequest(HttpMethod.GET, entityEndpoint, null);
         JavaType entitiesResponseType = mapper.getTypeFactory()
                 .constructParametricType(EntitiesResponse.class, responseType);
         return mapper.readValue(json, entitiesResponseType);
@@ -94,29 +80,18 @@ class KankaRestClient {
     <T extends KankaEntity> T updateEntity(String endpoint, Class<T> responseType, Optional<Long> parentId, KankaEntity entity) throws IOException, URISyntaxException {
         Preconditions.checkNotNull(entity, "The kanka entity cannot be null");
         Preconditions.checkNotNull(entity.getId(), "The entity id cannot be null");
+        Preconditions.checkArgument(entity.getId() > UNSET, "The kanka entity id must be greater than 0");
 
-        if (parentId.isPresent()) {
-            Preconditions.checkArgument(parentId.get() > UNSET,
-                    "The parent id should be greater than 0");
-            endpoint = String.format(endpoint, parentId.get(), entity.getId());
-        } else {
-            endpoint = String.format(endpoint, entity.getId());
-        }
-
-        String json = makeRequest(HttpMethod.PATCH, endpoint, entity);
+        String entityEndpoint = constructEndpoint(endpoint, parentId, entity.getId());
+        String json = makeRequest(HttpMethod.PATCH, entityEndpoint, entity);
         return responseType.cast(mapper.readValue(getDataFieldFromJsonStr(json), responseType));
     }
 
     void deleteEntity(String endpoint, Optional<Long> parentId, long id) throws IOException, URISyntaxException {
         Preconditions.checkArgument(id > UNSET, "The kanka entity id must be greater than 0");
-        if (parentId.isPresent()) {
-            Preconditions.checkArgument(parentId.get() > UNSET,
-                    "The parent id should be greater than 0");
-            endpoint = String.format(endpoint, parentId.get(), id);
-        } else {
-            endpoint = String.format(endpoint, id);
-        }
-        makeRequest(HttpMethod.DELETE, endpoint, null);
+
+        String entityEndpoint = constructEndpoint(endpoint, parentId, id);
+        makeRequest(HttpMethod.DELETE, entityEndpoint, null);
     }
 
     private String makeRequest(HttpMethod httpMethod, String endpoint, KankaEntity kankaEntity)
@@ -229,5 +204,25 @@ class KankaRestClient {
     private String getDataFieldFromJsonStr(String json) throws JsonProcessingException {
         ObjectNode node = mapper.readValue(json, ObjectNode.class);
         return node.get("data").toString();
+    }
+
+    private String constructEndpoint(String endpoint, Optional<Long> parentId, long entityId) {
+        if (parentId != null && parentId.isPresent()) {
+            Preconditions.checkArgument(parentId.get() != UNSET,
+                    "The parent id must be set");
+            return String.format(endpoint, parentId.get(), entityId);
+        } else {
+            return String.format(endpoint, entityId);
+        }
+    }
+
+    private String constructEndpoint(String endpoint, Optional<Long> parentId) {
+        if (parentId != null && parentId.isPresent()) {
+            Preconditions.checkArgument(parentId.get() > UNSET,
+                    "The parent id should be greater than 0");
+            return String.format(endpoint, parentId.get());
+        } else {
+            return endpoint;
+        }
     }
 }

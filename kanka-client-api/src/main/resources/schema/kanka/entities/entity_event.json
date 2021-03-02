@@ -1,0 +1,40 @@
+{
+  "type": "object",
+  "extends": {
+    "$ref": "entity.json"
+  },
+  "properties": {
+    "colour": {
+      "required": false,
+      "type": "string"
+    },
+    "comment": {
+      "required": false,
+      "type": "string"
+    },
+    "day": {
+      "required": true,
+      "type": "integer"
+    },
+    "is_recurring": {
+      "required": false,
+      "type": "boolean"
+    },
+    "length": {
+      "required": true,
+      "type": "integer"
+    },
+    "month": {
+      "required": true,
+      "type": "integer"
+    },
+    "recurring_until": {
+      "required": false,
+      "type": "integer"
+    },
+    "year": {
+      "required": true,
+      "type": "integer"
+    }
+  }
+}

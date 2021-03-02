@@ -4,14 +4,18 @@
     "$ref": "entity.json"
   },
   "properties": {
+    "is_shown": {
+      "required": false,
+      "type": "boolean"
+    },
     "visibility": {
       "required": false,
       "type": "string",
       "enum": [
         "all",
-        "self",
         "admin",
-        "self-admin"
+        "admin-self",
+        "self"
       ]
     }
   }

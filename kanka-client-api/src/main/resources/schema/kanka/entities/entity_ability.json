@@ -4,6 +4,15 @@
     "$ref": "entity.json"
   },
   "properties": {
+    "ability_id": {
+      "required": true,
+      "type": "string",
+      "format": "utc-millisec"
+    },
+    "charges": {
+      "required": false,
+      "type": "integer"
+    },
     "visibility": {
       "required": false,
       "type": "string",

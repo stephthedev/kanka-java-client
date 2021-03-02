@@ -1,0 +1,43 @@
+{
+  "type": "object",
+  "extends": {
+    "$ref": "entity.json"
+  },
+  "properties": {
+    "colour": {
+      "required": false,
+      "type": "string"
+    },
+    "custom_icon": {
+      "required": false,
+      "type": "string"
+    },
+    "custom_shape": {
+      "required": false,
+      "type": "string"
+    },
+    "font_colour": {
+      "required": false,
+      "type": "string"
+    },
+    "is_draggable": {
+      "required": false,
+      "type": "boolean"
+    },
+    "map_id": {
+      "required": true,
+      "type": "string",
+      "format": "utc-millisec"
+    },
+    "visibility": {
+      "required": false,
+      "type": "string",
+      "enum": [
+        "all",
+        "admin",
+        "admin-self",
+        "self"
+      ]
+    }
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "type": "object",
+  "extends": {
+    "$ref": "entity.json"
+  },
+  "properties": {
+    "tag_id": {
+      "required": true,
+      "type": "string",
+      "format": "utc-millisec"
+    }
+  }
+}

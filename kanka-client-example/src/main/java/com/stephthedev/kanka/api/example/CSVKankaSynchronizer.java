@@ -46,15 +46,17 @@ public class CSVKankaSynchronizer {
 
     Map<String, KankaCharacter> getAllCharacters() throws IOException, URISyntaxException {
         List<KankaCharacter> characters = new ArrayList<>();
-        EntitiesResponse<KankaCharacter> response = client.getCharacters(new EntitiesRequest.Builder().build());
-        characters.addAll(response.getData());
 
-        while (response.getLinks().getNext() != null) {
-            EntitiesRequest request = new EntitiesRequest.Builder()
-                    .withLink(response.getLinks().getNext())
-                    .build();
-            response = client.getCharacters(request);
+        EntitiesRequest request = new EntitiesRequest.Builder().build();
+        for(;;) {
+            EntitiesResponse<KankaCharacter> response = client.getCharacters(request);
             characters.addAll(response.getData());
+
+            if (response.getMeta().getCurrentPage() == response.getMeta().getLastPage()) {
+                break;
+            }
+
+            request = new EntitiesRequest.Builder().withLink(response.getLinks().getNext()).build();
         }
 
         return characters.stream()
@@ -63,16 +65,19 @@ public class CSVKankaSynchronizer {
 
     Map<String, KankaLocation> getAllLocations() throws IOException, URISyntaxException {
         List<KankaLocation> locations = new ArrayList<>();
-        EntitiesResponse<KankaLocation> response = client.getLocations(new EntitiesRequest.Builder().build());
-        locations.addAll(response.getData());
 
-        while (response.getLinks().getNext() != null) {
-            EntitiesRequest request = new EntitiesRequest.Builder()
-                    .withLink(response.getLinks().getNext())
-                    .build();
-            response = client.getLocations(request);
+        EntitiesRequest request = new EntitiesRequest.Builder().build();
+        for (;;) {
+            EntitiesResponse<KankaLocation> response = client.getLocations(new EntitiesRequest.Builder().build());
             locations.addAll(response.getData());
+
+            if (response.getMeta().getCurrentPage() == response.getMeta().getLastPage()) {
+                break;
+            }
+
+            request = new EntitiesRequest.Builder().withLink(response.getLinks().getNext()).build();
         }
+
         return locations.stream()
                 .collect(Collectors.toMap(KankaLocation::getName, e -> e));
     }
@@ -94,6 +99,7 @@ public class CSVKankaSynchronizer {
             .addColumn("Player Notes")
             .addColumn("GM Notes")
             .addColumn("Image URL")
+            .addColumn("Is private")
             .build();
 
         // configure the reader on what bean to read and how we want to write
@@ -122,21 +128,25 @@ public class CSVKankaSynchronizer {
         return characters;
     }
 
-    public void sync() throws IOException, URISyntaxException {
+    public void sync() throws IOException, URISyntaxException, InterruptedException {
         List<CSVCharacter> csvCharacters = getCharactersFromCSV();
 
         for (CSVCharacter csvCharacter : csvCharacters) {
+            if (csvCharacter.isPrivate()) {
+                continue;
+            }
             System.out.println("Upserting " + csvCharacter.getName());
             KankaCharacter kankaCharacter = upsertCharacter(csvCharacter);
             KankaEntityNote kankaEntityNote = upsertCharacterNote(csvCharacter.getGmNotes(),
                     kankaCharacter.getEntityId());
+            Thread.sleep(10000);    //TODO: Find another way to not get rate-limited
         }
     }
 
     private KankaEntityNote upsertCharacterNote(String text, long parentId) throws IOException, URISyntaxException {
         final String noteName = "GM Notes";
         KankaEntityNote note = (KankaEntityNote) new KankaEntityNote.KankaEntityNoteBuilder<>()
-                .withVisibility("admin")
+                .withVisibility(KankaEntityNote.Visibility.ADMIN)
                 .withEntry(text.replaceAll("\n", "<br />"))
                 .withEntityId(parentId)
                 .withName(noteName)
@@ -161,12 +171,12 @@ public class CSVKankaSynchronizer {
 
     private KankaCharacter upsertCharacter(CSVCharacter csvCharacter) throws IOException, URISyntaxException {
         KankaCharacter character = (KankaCharacter) new KankaCharacter.KankaCharacterBuilder<>()
-                .withName(csvCharacter.getName().trim())
                 .withAge(csvCharacter.getAge().trim())
                 .withSex(csvCharacter.getSex())
                 .withLocationId(kankaLocations.containsKey(csvCharacter.getLocation()) ?
                         kankaLocations.get(csvCharacter.getLocation()).getId() : null)
                 .withType("NPC")
+                .withName(csvCharacter.getName().trim())
                 .withEntry(csvCharacter.getPlayerNotes())
                 .build();
 
@@ -181,7 +191,7 @@ public class CSVKankaSynchronizer {
             character.setId(charFromKanka.getId());
             charFromKanka = client.updateCharacter(character);
         } else {
-            System.out.println(String.format(CREATING_MSG, "character", charFromKanka.getName()));
+            System.out.println(String.format(CREATING_MSG, "character", csvCharacter.getName()));
             charFromKanka = client.createCharacter(character);
         }
         return charFromKanka;
@@ -192,10 +202,12 @@ public class CSVKankaSynchronizer {
             String[] lines = personality.split("\n");
             Map<String, String> personalityMap = new HashMap<>();
             for (String line : lines) {
-                int index = line.indexOf(":");
-                String trait = line.substring(0, index);
-                String value = line.substring(index + 1);
-                personalityMap.put(trait.trim(), value.trim());
+                if (!line.trim().isEmpty()) {
+                    int index = line.indexOf(":");
+                    String trait = line.substring(0, index);
+                    String value = line.substring(index + 1);
+                    personalityMap.put(trait.trim(), value.trim());
+                }
             }
 
             kankaCharacter.setPersonalityName(new ArrayList<>(personalityMap.keySet()));

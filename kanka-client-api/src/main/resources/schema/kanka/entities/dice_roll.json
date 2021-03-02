@@ -4,7 +4,7 @@
     "$ref": "entity.json"
   },
   "properties": {
-    "family_id": {
+    "character_id": {
       "required": false,
       "type": "string",
       "format": "utc-millisec"
@@ -13,12 +13,11 @@
       "required": false,
       "type": "string"
     },
-    "location_id": {
-      "required": false,
-      "type": "string",
-      "format": "utc-millisec"
+    "parameters": {
+      "required": true,
+      "type": "string"
     },
-    "type": {
+    "system": {
       "required": false,
       "type": "string"
     }

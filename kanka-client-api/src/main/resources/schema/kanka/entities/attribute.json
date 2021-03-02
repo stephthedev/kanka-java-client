@@ -1,0 +1,34 @@
+{
+  "type": "object",
+  "extends": {
+    "$ref": "entity.json"
+  },
+  "properties": {
+    "api_key": {
+      "required": false,
+      "type": "string"
+    },
+    "default_order": {
+      "required": false,
+      "type": "integer"
+    },
+    "is_star": {
+      "required": false,
+      "type": "boolean"
+    },
+    "type": {
+      "required": false,
+      "type": "string",
+      "enum": [
+        "null",
+        "text",
+        "section",
+        "checkbox"
+      ]
+    },
+    "value": {
+      "required": false,
+      "type": "string"
+    }
+  }
+}

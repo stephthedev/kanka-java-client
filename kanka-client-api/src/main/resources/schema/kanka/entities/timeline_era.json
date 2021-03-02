@@ -1,0 +1,33 @@
+{
+  "type": "object",
+  "extends": {
+    "$ref": "entity.json"
+  },
+  "properties": {
+    "abbreviation": {
+      "required": false,
+      "type": "string"
+    },
+    "end_year": {
+      "required": false,
+      "type": "integer"
+    },
+    "era": {
+      "required": true,
+      "type": "string"
+    },
+    "start_year": {
+      "required": false,
+      "type": "integer"
+    },
+    "visiblity": {
+      "required": false,
+      "type": "string",
+      "enum": [
+        "all",
+        "admin",
+        "self"
+      ]
+    }
+  }
+}

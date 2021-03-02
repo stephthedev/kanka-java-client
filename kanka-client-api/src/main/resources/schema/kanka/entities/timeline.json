@@ -4,19 +4,13 @@
     "$ref": "entity.json"
   },
   "properties": {
-    "family_id": {
-      "required": false,
-      "type": "string",
-      "format": "utc-millisec"
-    },
     "image_url": {
       "required": false,
       "type": "string"
     },
-    "location_id": {
+    "revert_order": {
       "required": false,
-      "type": "string",
-      "format": "utc-millisec"
+      "type": "boolean"
     },
     "type": {
       "required": false,

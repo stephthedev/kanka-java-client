@@ -19,9 +19,9 @@ public class KankaCharacterEntityIT extends BaseEntityIT {
     @Override
     KankaEntity generateEntity() {
         KankaCharacter character = (KankaCharacter) new KankaCharacter.KankaCharacterBuilder<>()
-                .withName(testName.getMethodName() + System.nanoTime())
                 .withAge("10")
                 .withSex("F")
+                .withName(testName.getMethodName() + System.nanoTime())
                 .withEntry("Line1 \n Line 2")
                 .build();
         return character;

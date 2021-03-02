@@ -1,28 +1,86 @@
 {
-  "type" : "object",
-  "extends" : {
-    "$ref" : "entity.json"
+  "type": "object",
+  "extends": {
+    "$ref": "entity.json"
   },
-  "properties" : {
-    "name" : {
-      "type" : "string",
-      "required" : true
+  "properties": {
+    "axis_x": {
+      "required": true,
+      "type": "integer"
     },
-    "type" : {
-      "type" : "string"
+    "axis_y": {
+      "required": true,
+      "type": "integer"
     },
-    "parent_location_id" : {
-      "type" : "string",
+    "colour": {
+      "required": true,
+      "type": "string",
+      "enum": [
+        "none",
+        "grey",
+        "red",
+        "blue",
+        "green",
+        "yellow",
+        "black",
+        "white"
+      ]
+    },
+    "icon": {
+      "required": true,
+      "type": "string",
+      "enum": [
+        "pin",
+        "entity"
+      ]
+    },
+    "image_url": {
+      "required": false,
+      "type": "string"
+    },
+    "is_map_private": {
+      "required": false,
+      "type": "boolean"
+    },
+    "location_id": {
+      "required": false,
+      "type": "string",
       "format": "utc-millisec"
     },
-    "image_url" : {
-      "type" : "string"
+    "map_url": {
+      "required": false,
+      "type": "string"
     },
-    "is_map_private" : {
-      "type" : "boolean"
+    "parent_location_id": {
+      "required": false,
+      "type": "string",
+      "format": "utc-millisec"
     },
-    "map_url" : {
-      "type" : "string"
+    "shape": {
+      "required": true,
+      "type": "string",
+      "enum": [
+        "circle",
+        "square"
+      ]
+    },
+    "size": {
+      "required": true,
+      "type": "string",
+      "enum": [
+        "standard",
+        "small",
+        "large"
+      ]
+    },
+    "target_entity_id": {
+      "required": true,
+      "type": "string",
+      "format": "utc-millisec"
+    },
+    "type": {
+      "required": false,
+      "type": "string"
     }
   }
 }

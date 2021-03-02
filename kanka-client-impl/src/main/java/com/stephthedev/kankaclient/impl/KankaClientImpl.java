@@ -186,7 +186,7 @@ public class KankaClientImpl implements KankaClient {
 			Preconditions.checkNotNull(authToken, "The authentication token cannot be null");
 			Preconditions.checkArgument(campaignId > UNSET, "The campaign id is not set");
 
-			String host = String.format("https://kanka.io/api/%s/campaigns/%d", kankaVersion, campaignId);
+			String host = String.format("kanka.io/api/%s/campaigns/%d", kankaVersion, campaignId);
 			return new KankaClientImpl(host, authToken, campaignId);
 		}
 	}

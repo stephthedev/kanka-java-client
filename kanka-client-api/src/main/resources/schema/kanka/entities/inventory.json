@@ -4,23 +4,31 @@
     "$ref": "entity.json"
   },
   "properties": {
-    "family_id": {
+    "amount": {
+      "required": true,
+      "type": "string"
+    },
+    "is_equipped": {
       "required": false,
+      "type": "boolean"
+    },
+    "item_id": {
+      "required": true,
       "type": "string",
       "format": "utc-millisec"
     },
-    "image_url": {
+    "position": {
       "required": false,
       "type": "string"
     },
-    "location_id": {
+    "visiblity": {
       "required": false,
       "type": "string",
-      "format": "utc-millisec"
-    },
-    "type": {
-      "required": false,
-      "type": "string"
+      "enum": [
+        "all",
+        "admin",
+        "self"
+      ]
     }
   }
 }

@@ -4,6 +4,19 @@
     "$ref": "entity.json"
   },
   "properties": {
+    "amount": {
+      "required": false,
+      "type": "string"
+    },
+    "item_id": {
+      "required": true,
+      "type": "string",
+      "format": "utc-millisec"
+    },
+    "position": {
+      "required": false,
+      "type": "string"
+    },
     "visibility": {
       "required": false,
       "type": "string",

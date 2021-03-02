@@ -32,6 +32,7 @@ public class CSVCharacter {
     String playerNotes;
     String gmNotes;
     String imageURL;
+    boolean isPrivate;
 
     public String getName() {
         return name;
@@ -128,6 +129,10 @@ public class CSVCharacter {
     public void setImageURL(String imageURL) {
         this.imageURL = imageURL;
     }
+
+    public boolean isPrivate() { return isPrivate; }
+
+    public void setIsPrivate(boolean isPrivate) { this.isPrivate = isPrivate; }
 
     @Override
     public String toString() {

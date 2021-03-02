@@ -4,10 +4,9 @@
     "$ref": "entity.json"
   },
   "properties": {
-    "family_id": {
+    "date": {
       "required": false,
-      "type": "string",
-      "format": "utc-millisec"
+      "type": "string"
     },
     "image_url": {
       "required": false,

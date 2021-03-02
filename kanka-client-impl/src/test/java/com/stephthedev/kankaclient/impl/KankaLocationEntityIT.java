@@ -19,8 +19,8 @@ public class KankaLocationEntityIT extends BaseEntityIT {
     @Override
     KankaEntity generateEntity() {
         KankaLocation entity = (KankaLocation) new KankaLocation.KankaLocationBuilder<>()
-                .withName(testName.getMethodName() + System.nanoTime())
                 .withType("city")
+                .withName(testName.getMethodName() + System.nanoTime())
                 .withEntry("Dummy location")
                 .build();
         return entity;

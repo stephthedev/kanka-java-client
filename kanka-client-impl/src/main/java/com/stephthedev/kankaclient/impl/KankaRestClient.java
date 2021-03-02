@@ -71,7 +71,7 @@ class KankaRestClient {
 
     EntitiesResponse readEntities(String endpoint, Class responseType, Optional<Long> parentId, EntitiesRequest request) throws IOException, URISyntaxException {
         String entityEndpoint = constructEndpoint(endpoint, parentId);
-        String json = makeRequest(HttpMethod.GET, entityEndpoint, null);
+        String json = makeRequest(HttpMethod.GET, entityEndpoint, null, request);
         JavaType entitiesResponseType = mapper.getTypeFactory()
                 .constructParametricType(EntitiesResponse.class, responseType);
         return mapper.readValue(json, entitiesResponseType);
@@ -117,7 +117,7 @@ class KankaRestClient {
         URI uri = null;
 
         if (entitiesRequest == null) {
-            uri = new URI(host + endpoint);
+            uri = new URI("https://" + host + endpoint);
         }
 
         if (entitiesRequest != null) {
@@ -125,7 +125,9 @@ class KankaRestClient {
                 uri = new URI(entitiesRequest.getLink());
             } else {
                 //Set the host + path
-                URIBuilder uriBuilder = new URIBuilder().setHost(host)
+                URIBuilder uriBuilder = new URIBuilder()
+                        .setScheme("https")
+                        .setHost(host)
                         .setPath(endpoint);
                 if (entitiesRequest.getPage() > -1) {
                     uriBuilder = uriBuilder.addParameter("page", entitiesRequest.getPage() + "");

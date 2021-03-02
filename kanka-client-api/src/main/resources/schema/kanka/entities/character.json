@@ -1,75 +1,75 @@
 {
-  "type" : "object",
-  "extends" : {
-    "$ref" : "entity.json"
+  "type": "object",
+  "extends": {
+    "$ref": "entity.json"
   },
-  "properties" : {
-    "age" : {
-      "type" : "string"
+  "properties": {
+    "age": {
+      "required": false,
+      "type": "string"
     },
-    "appearance_entry" : {
-      "type" : "array",
-      "items" : {
-        "type" : "string"
+    "appearance_entry": {
+      "required": false,
+      "type": "array",
+      "items": {
+        "type": "string"
       }
     },
-    "appearance_name" : {
-      "type" : "array",
-      "items" : {
-        "type" : "string"
+    "appearance_name": {
+      "required": false,
+      "type": "array",
+      "items": {
+        "type": "string"
       }
     },
-    "family_id" : {
-      "type" : "string",
+    "family_id": {
+      "required": false,
+      "type": "string",
       "format": "utc-millisec"
     },
-    "has_custom_image" : {
-      "type" : "boolean"
+    "image_url": {
+      "required": false,
+      "type": "string"
     },
-    "is_dead" : {
-      "type" : "boolean"
+    "is_dead": {
+      "required": false,
+      "type": "boolean"
     },
-    "is_private" : {
-      "type" : "boolean"
-    },
-    "location_id" : {
-      "type" : "string",
+    "location_id": {
+      "required": false,
+      "type": "string",
       "format": "utc-millisec"
     },
-    "name" : {
-      "type" : "string",
-      "required" : true
-    },
-    "personality_entry" : {
-      "type" : "array",
-      "items" : {
-        "type" : "string"
+    "personality_entry": {
+      "required": false,
+      "type": "array",
+      "items": {
+        "type": "string"
       }
     },
-    "personality_name" : {
-      "type" : "array",
-      "items" : {
-        "type" : "string"
+    "personality_name": {
+      "required": false,
+      "type": "array",
+      "items": {
+        "type": "string"
       }
     },
-    "race_id" : {
-      "type" : "string",
+    "race_id": {
+      "required": false,
+      "type": "string",
       "format": "utc-millisec"
     },
-    "sex" : {
-      "type" : "string"
+    "sex": {
+      "required": false,
+      "type": "string"
     },
-    "title" : {
-      "type" : "string"
+    "title": {
+      "required": false,
+      "type": "string"
     },
-    "type" : {
-      "type" : "string"
-    },
-    "traits" : {
-      "type" : "array",
-      "items" : {
-        "$ref" : "trait.json"
-      }
+    "type": {
+      "required": false,
+      "type": "string"
     }
   }
 }

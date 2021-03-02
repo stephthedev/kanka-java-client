@@ -1,0 +1,38 @@
+{
+  "type": "object",
+  "extends": {
+    "$ref": "entity.json"
+  },
+  "properties": {
+    "attitude": {
+      "required": false,
+      "type": "integer"
+    },
+    "colour": {
+      "required": false,
+      "type": "string"
+    },
+    "is_star": {
+      "required": false,
+      "type": "boolean"
+    },
+    "owner_id": {
+      "required": true,
+      "type": "string",
+      "format": "utc-millisec"
+    },
+    "relation": {
+      "required": true,
+      "type": "string"
+    },
+    "target_id": {
+      "required": true,
+      "type": "string",
+      "format": "utc-millisec"
+    },
+    "two_way": {
+      "required": false,
+      "type": "boolean"
+    }
+  }
+}

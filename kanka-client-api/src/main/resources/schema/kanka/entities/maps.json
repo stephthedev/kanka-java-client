@@ -4,16 +4,24 @@
     "$ref": "entity.json"
   },
   "properties": {
-    "family_id": {
+    "center_x": {
+      "required": false,
+      "type": "integer"
+    },
+    "center_y": {
+      "required": false,
+      "type": "integer"
+    },
+    "image_url": {
+      "required": true,
+      "type": "string"
+    },
+    "location_id": {
       "required": false,
       "type": "string",
       "format": "utc-millisec"
     },
-    "image_url": {
-      "required": false,
-      "type": "string"
-    },
-    "location_id": {
+    "map_id": {
       "required": false,
       "type": "string",
       "format": "utc-millisec"

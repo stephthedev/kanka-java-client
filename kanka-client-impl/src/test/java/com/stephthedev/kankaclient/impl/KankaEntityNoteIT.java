@@ -14,7 +14,7 @@ public class KankaEntityNoteIT extends BaseEntityIT {
     @Before
     public void setUpKnownEntity() {
         knownEntity = new KankaEntityNote.KankaEntityNoteBuilder<>()
-                .withVisibility("admin")
+                .withVisibility(KankaEntityNote.Visibility.ADMIN)
                 .withId(51496L)
                 .withName("Secrets")
                 .withEntityId(PARENT_ENTITY_ID)
@@ -24,7 +24,7 @@ public class KankaEntityNoteIT extends BaseEntityIT {
     @Override
     KankaEntity generateEntity() {
         KankaEntityNote entity = (KankaEntityNote) new KankaEntityNote.KankaEntityNoteBuilder<>()
-                .withVisibility("all")
+                .withVisibility(KankaEntityNote.Visibility.ALL)
                 .withEntityId(PARENT_ENTITY_ID)
                 .withName(testName.getMethodName() + System.nanoTime())
                 .withEntry("Dummy entity note")

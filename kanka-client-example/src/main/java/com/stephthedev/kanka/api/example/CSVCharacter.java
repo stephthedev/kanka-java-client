@@ -1,6 +1,7 @@
 package com.stephthedev.kanka.api.example;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 @JsonPropertyOrder({
@@ -15,7 +16,8 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
     "personality",
     "playerNotes",
     "gmNotes",
-    "imageURL"
+    "imageURL",
+    "isPrivate"
 })
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class CSVCharacter {
@@ -32,6 +34,8 @@ public class CSVCharacter {
     String playerNotes;
     String gmNotes;
     String imageURL;
+    
+    @JsonProperty("is_private")
     boolean isPrivate;
 
     public String getName() {
@@ -130,11 +134,17 @@ public class CSVCharacter {
         this.imageURL = imageURL;
     }
 
-    public boolean isPrivate() { return isPrivate; }
+    @JsonProperty("is_private")
+    public boolean isPrivate() {
+		return isPrivate;
+	}
 
-    public void setIsPrivate(boolean isPrivate) { this.isPrivate = isPrivate; }
+    @JsonProperty("is_private")
+	public void setPrivate(boolean isPrivate) {
+		this.isPrivate = isPrivate;
+	}
 
-    @Override
+	@Override
     public String toString() {
         StringBuilder builder = new StringBuilder();
         builder.append("Name: " + name);

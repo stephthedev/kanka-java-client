@@ -146,14 +146,14 @@ public class KankaClientImpl implements KankaClient {
 	public static class Builder {
 
 		private static final long UNSET = -1L;
-		static final String KANKA_VERSION = "v1";
+		static final String KANKA_VERSION = "1.0";
 
 		String authToken;
 		long campaignId = UNSET;
 		String kankaVersion = KANKA_VERSION;
 
 		/**
-		 * (Optional) Defaults to "v1"
+		 * (Optional) Defaults to "1.0"
 		 * @param kankaVersion The kanka version to use
 		 * @return
 		 */

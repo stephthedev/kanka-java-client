@@ -132,9 +132,6 @@ public class CSVKankaSynchronizer {
         List<CSVCharacter> csvCharacters = getCharactersFromCSV();
 
         for (CSVCharacter csvCharacter : csvCharacters) {
-            if (csvCharacter.isPrivate()) {
-                continue;
-            }
             System.out.println("Upserting " + csvCharacter.getName());
             KankaCharacter kankaCharacter = upsertCharacter(csvCharacter);
             KankaEntityNote kankaEntityNote = upsertCharacterNote(csvCharacter.getGmNotes(),
@@ -178,6 +175,7 @@ public class CSVKankaSynchronizer {
                 .withType("NPC")
                 .withName(csvCharacter.getName().trim())
                 .withEntry(csvCharacter.getPlayerNotes())
+                .withIsPrivate(csvCharacter.isPrivate())
                 .build();
 
         setPersonalityTraits(character, csvCharacter.getPersonality());
@@ -202,8 +200,8 @@ public class CSVKankaSynchronizer {
             String[] lines = personality.split("\n");
             Map<String, String> personalityMap = new HashMap<>();
             for (String line : lines) {
-                if (!line.trim().isEmpty()) {
-                    int index = line.indexOf(":");
+                int index = line.indexOf(":");
+                if (index > -1) {
                     String trait = line.substring(0, index);
                     String value = line.substring(index + 1);
                     personalityMap.put(trait.trim(), value.trim());
